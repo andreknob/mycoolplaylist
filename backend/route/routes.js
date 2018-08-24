@@ -29,7 +29,12 @@ router.put('/put/:id', (req, res, next) => {
 });
 
 router.delete('/delete/:id', (req, res, next) => {
-
+    User.remove(
+        {_id: req.params.id},
+        (err, result) => {
+            res.json(err ? err : result);
+        }
+    );
 });
 
 module.exports = router;
