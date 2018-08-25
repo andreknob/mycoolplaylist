@@ -4,8 +4,12 @@ const router = express.Router();
 const User = require('../model/User');
 
 router.get('/get', (req, res, next) => {
+    // todo - .find is deprecated
     User.find((err, users) => {
-        res.json(err ? err : users);
+        if (err) {
+            return handleError(err);
+        }
+        res.status(200).json(users);
     });
 });
 
@@ -14,7 +18,10 @@ router.post('/post', (req, res, next) => {
         name: req.body.name,
     });
     user.save((err, result) => {
-        res.json(err ? err : {msg: 'User created successfully'}, result);
+        if (err) {
+            return handleError(err);
+        }
+        res.status(200).json({msg: 'User created successfully', result});
     });
 });
 
@@ -23,7 +30,10 @@ router.put('/put/:id', (req, res, next) => {
         {_id: req.params.id},
         {$set: {name: req.body.name}}, 
         (err, result) => {
-            res.json(err ? err : {msg: 'User updated successfully', result});
+            if (err) {
+                return handleError(err);
+            }
+            res.status(200).json({msg: 'User updated successfully', result});
         }
     );
 });
@@ -32,9 +42,16 @@ router.delete('/delete/:id', (req, res, next) => {
     User.remove(
         {_id: req.params.id},
         (err, result) => {
-            res.json(err ? err : result);
+            if (err) {
+                return handleError(err);
+            }
+            res.status(200).json(result);
         }
     );
 });
+
+function handleError() {
+    // todo
+}
 
 module.exports = router;

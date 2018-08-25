@@ -13,6 +13,10 @@ export class WebAPIService {
   }
 
   get() {
+    /**
+     * Since the application will be served by node.js,
+     * the domain name won't be necessary
+     */
     return this.http.get('')
     .pipe(map(res => res.json()));
   }
