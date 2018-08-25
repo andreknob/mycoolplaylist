@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node backend/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "pushd frontend && ng build --aot --prod && popd"
+    "postinstall": "cd frontend && ng build --aot --prod && cd .."
+  },
+  "engines": {
+    "node": "8.11.4",
+    "npm": "5.6.0"
   },
   "repository": {
     "type": "git",
