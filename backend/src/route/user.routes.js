@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const userController = require('../module/user/user.controller');
+const User = require('../module/user/user.schema');
 
-const User = require('../model/User');
-
-router.get('/get', (req, res, next) => {
+router.get('/get/:id', (req, res, next) => {
     // todo - .find is deprecated
     User.find((err, users) => {
         if (err) {
@@ -12,6 +12,8 @@ router.get('/get', (req, res, next) => {
         res.status(200).json(users);
     });
 });
+
+router.get('/list', userController.list);
 
 router.post('/post', (req, res, next) => {
     let user = new User({

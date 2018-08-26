@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
-const router = require('./route/routes');
 const path = require('path');
 
 const app = express();
@@ -24,16 +23,12 @@ app.use(cors());
 //adding json
 app.use(bodyparser.json());
 //use routes
-app.use('/api', router);
+app.use('/api', require('./src/route'));
 //use static content
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
-});
-
-app.get('/', (req, res) => {
-    res.send('foobars');
 });
 
 app.listen(PORT, () => {
