@@ -35,10 +35,10 @@ module.exports = {
             }});
         }
 
-        return UserModel.findOne({_id}).then(user => {
+        return UserModel.findById(_id).then(user => {
             return {status: 200, user};
         }).catch(err => {
-            throw {status: 400, err};
+            return {status: 500, err};
         });
         /* return new Promise((resolve, reject) => {
             UserModel.find({_id}, (err, user) => {

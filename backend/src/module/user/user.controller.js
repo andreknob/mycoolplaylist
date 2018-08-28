@@ -5,12 +5,9 @@ module.exports = {
     /**
      * Fetch a specific User by its id.
      */ 
-    get: (req, res) => {
-        userLogic.get(req.params.id).then(response => {
-            res.status(response.status).json(response);
-        }).catch(err => {
-            res.status(err.status).json(err);
-        });;
+    get: async (req, res) => {
+        const response = await userLogic.get(req.params.id);
+        res.status(response.status).json(response);
     },
 
     /**
@@ -30,7 +27,7 @@ module.exports = {
             name: req.body.name,
         });
         user.save((err, result) => {
-            return err ? handleError(err) : res.status(200).json({msg: 'User created successfully', result});
+            return err ? res.status(500).json(err) : res.status(200).json({msg: 'User created successfully', result});
         });
     },
 
@@ -38,9 +35,12 @@ module.exports = {
      * Update an User.
      */ 
     put: (req, res) => {
-        User.findOneAndUpdate(
+        const updateOps = {};
+        req.body.forEach(op => updateOps[op.fieldName] = op.value);
+
+        User.update(
             {_id: req.params.id},
-            {$set: {name: req.body.name}}, 
+            {$set: updateOps}, 
             (err, result) => {
                 return err ? handleError(err) : res.status(200).json({msg: 'User updated successfully', result});
             }

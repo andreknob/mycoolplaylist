@@ -19,12 +19,27 @@ mongoose.connection.on('error', error => {
 
 const PORT = process.env.PORT || 8080;
 
-//adding cors
+// adding cors
 app.use(cors());
-//adding json
+// adding json
 app.use(bodyparser.json());
-//use routes
+// use routes
 app.use('/api', require('./src/route'));
+// intercepts non existent api requests
+app.use('/api/*', (req, res, next) => {
+    const error = new Error('API handler not found');
+    error.status = 404;
+    next(error);
+})
+
+app.use((error, req, res, next) => {
+    error.status = error.status || 500;
+    res.status(error.status).json({
+        status: error.status,
+        message: error.message
+    });
+})
+
 //use static content
 app.use(express.static(path.join(__dirname, 'public')));
 
