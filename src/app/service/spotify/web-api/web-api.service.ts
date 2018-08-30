@@ -10,6 +10,7 @@ export class WebAPIService {
   constructor(private http: Http) {}
 
   connect() {
+
   }
 
   get() {
