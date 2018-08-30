@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../module/user/user.controller');
+const getMiddleware = require('../middleware/getMiddleware');
+const UserController = require('../module/user/UserController');
 
-router.get('/:id', userController.get);
+router.get('/:id', getMiddleware, UserController.get.bind(UserController));
 
-router.get('/', userController.list);
+router.get('/', UserController.list.bind(UserController));
 
-router.post('/', userController.post);
+router.post('/', UserController.post.bind(UserController));
 
-router.put('/:id', userController.put);
+router.put('/:id', UserController.put.bind(UserController));
 
-router.delete('/:id', userController.delete);
+router.delete('/:id', UserController.delete.bind(UserController));
 
 module.exports = router;
