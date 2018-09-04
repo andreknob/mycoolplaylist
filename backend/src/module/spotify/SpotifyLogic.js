@@ -1,37 +1,27 @@
 const AbstractLogic = require('../../core/logic/AbstractLogic');
 const SpotifyStore = require('../spotify/SpotifyStore');
-const http = require("http");
+const https = require("https");
+const querystring = require('querystring');
 
 const AUTHORIZATION = {
     SCOPES: 'user-read-private user-read-email',
-    CLIENT_ID: '993e260818e14852b08b78fc9e7055eb',
     // @todo build redirect page
     REDIRECT_URI: 'http://localhost:8080/api/spotify/redirect',
 }
 
-const OPTIONS = {
-    host: 'www.google.com',
-    port: 80,
-    path: '/upload',
-    method: 'POST'
-};
+const CLIENT = {
 
-var req = http.request(options, function(res) {
-    console.log('STATUS: ' + res.statusCode);
-    console.log('HEADERS: ' + JSON.stringify(res.headers));
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-      console.log('BODY: ' + chunk);
-    });
-  });
-  
-  req.on('error', function(e) {
-    console.log('problem with request: ' + e.message);
-  });
-  
-  // write data to request body
-  req.write('data\n');
-  req.end();
+}
+
+const OPTIONS = {
+    host: 'accounts.spotify.com',
+    path: '/api/token',
+    method: 'POST',
+    headers: {
+        'Authorization': 'Basic ' + CLIENT.B64,
+        'Content-Type': 'application/x-www-form-urlencoded'  
+    }
+};
 
 class SpotifyLogic extends AbstractLogic {
 
@@ -40,12 +30,12 @@ class SpotifyLogic extends AbstractLogic {
      * @todo remove hard coded client id, transfer to env variable.
      */ 
     static getRequestAuthorizationURI() {
-        const {CLIENT_ID, SCOPES, REDIRECT_URI} = AUTHORIZATION;
+        const {SCOPES, REDIRECT_URI} = AUTHORIZATION;
         const stateValue = SpotifyStore.getStateValue();
 
         return 'https://accounts.spotify.com/authorize' +
         '?response_type=code' +
-        '&client_id=' + CLIENT_ID +
+        '&client_id=' + CLIENT.ID +
         (SCOPES ? '&scope=' + encodeURIComponent(SCOPES) : '') +
         '&redirect_uri=' + encodeURIComponent(REDIRECT_URI) +
         '&state=' + stateValue;
@@ -53,9 +43,31 @@ class SpotifyLogic extends AbstractLogic {
 
     static getRequestAccessURI({code, state}) {
         if (!SpotifyStore.removeStateValue(state)) {
-            return {status: 500, err: {message: 'No corresponding state found on SpotifyStore.'}};
+            return {status: 500, message: 'No corresponding state found on SpotifyStore.'};
         }
-        return {status: 200, uri: ''};
+        const {REDIRECT_URI} = AUTHORIZATION;
+
+        const postData = querystring.stringify({
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: REDIRECT_URI,
+        });
+
+        const req = https.request(OPTIONS, res => {
+            console.log('STATUS: ' + res.statusCode);
+            console.log('HEADERS: ' + JSON.stringify(res.headers));
+            res.on('data', chunk => {
+                console.log('RESPONSE BODY: ' + chunk);
+            });
+          });
+          
+          req.on('error', e => {
+            console.log('Problem with request: ' + e.message);
+          });
+          
+          req.end(postData);
+
+        return {status: 200, msg: req.body};
     }
 
     static handleAccessDenied({error, state}) {
