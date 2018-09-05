@@ -10,7 +10,6 @@ const AUTHORIZATION = {
 }
 
 const CLIENT = {
-
 }
 
 const OPTIONS = {
@@ -18,8 +17,8 @@ const OPTIONS = {
     path: '/api/token',
     method: 'POST',
     headers: {
-        'Authorization': 'Basic ' + CLIENT.B64,
-        'Content-Type': 'application/x-www-form-urlencoded'  
+        'Authorization': 'Basic ' + new Buffer(`${CLIENT.ID}:${CLIENT.SECRET}`).toString('base64'),
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
 };
 
@@ -41,9 +40,9 @@ class SpotifyLogic extends AbstractLogic {
         '&state=' + stateValue;
     }
 
-    static getRequestAccessURI({code, state}) {
+    static getRequestAccessURI({code, state}, res, responseEmitter) {
         if (!SpotifyStore.removeStateValue(state)) {
-            return {status: 500, message: 'No corresponding state found on SpotifyStore.'};
+            return responseEmitter(res, {status: 500, message: 'No corresponding state found on SpotifyStore.'});
         }
         const {REDIRECT_URI} = AUTHORIZATION;
 
@@ -53,26 +52,44 @@ class SpotifyLogic extends AbstractLogic {
             redirect_uri: REDIRECT_URI,
         });
 
-        const req = https.request(OPTIONS, res => {
-            console.log('STATUS: ' + res.statusCode);
-            console.log('HEADERS: ' + JSON.stringify(res.headers));
-            res.on('data', chunk => {
-                console.log('RESPONSE BODY: ' + chunk);
+        const req = https.request(OPTIONS, reqResponse => {
+            reqResponse.on('data', data => {
+                // responseEmitter(res, {status: 200, data: JSON.parse(data.toString())})
+                this.getUserInfo(JSON.parse(data.toString()).access_token, res, responseEmitter);
             });
-          });
+        });
           
-          req.on('error', e => {
-            console.log('Problem with request: ' + e.message);
-          });
-          
-          req.end(postData);
+        req.on('error', err => {
+            responseEmitter(res, {status: 500, message: err.message});
+        });
 
-        return {status: 200, msg: req.body};
+        req.end(postData);
     }
 
-    static handleAccessDenied({error, state}) {
+    static handleAccessDenied({error, state}, res, responseEmitter) {
         SpotifyStore.removeStateValue(state);
-        return {status: 401, err: {message: error}};
+        responseEmitter(res, {status: 401, message: error});
+    }
+
+    static getUserInfo(accessToken, res, responseEmitter) {
+        const options = {
+            host: 'api.spotify.com',
+            path: '/v1/me',
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+            }
+        };
+
+        const req = https.request(options, reqResponse => {
+            reqResponse.on('data', data => responseEmitter(res, {status: 200, data: JSON.parse(data.toString())}));
+        });
+          
+        req.on('error', err => {
+            responseEmitter(res, {status: 500, message: err.message});
+        });
+
+        req.end();
     }
 }
 

@@ -21,9 +21,17 @@ class SpotifyController extends AbstractController {
      */ 
     static redirect(req, res) {
         const {error} = req.query;
-        const response = error ? SpotifyLogic.handleAccessDenied(req.query) : SpotifyLogic.getRequestAccessURI(req.query);
- 
-        res.status(response.status).json(response);
+        error ? SpotifyLogic.handleAccessDenied(req.query, res, this.responseEmitter) 
+        : SpotifyLogic.getRequestAccessURI(req.query, res, this.responseEmitter);
+    }
+    
+    /**
+     * A response emitter.
+     * @param res the response object (from express' request handler) 
+     * @param result the result object (from node's request call) 
+     */ 
+    static responseEmitter(res, result) {
+        res.status(result.status).json(result);
     }
 }
 
