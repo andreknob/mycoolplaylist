@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "unlistenedplaylist": {
+    "mycoolplaylist": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -50,18 +50,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "unlistenedplaylist:build"
+            "browserTarget": "mycoolplaylist:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "unlistenedplaylist:build:production"
+              "browserTarget": "mycoolplaylist:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "unlistenedplaylist:build"
+            "browserTarget": "mycoolplaylist:build"
           }
         },
         "test": {
@@ -95,7 +95,7 @@
         }
       }
     },
-    "unlistenedplaylist-e2e": {
+    "mycoolplaylist-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -103,11 +103,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "unlistenedplaylist:serve"
+            "devServerTarget": "mycoolplaylist:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "unlistenedplaylist:serve:production"
+              "devServerTarget": "mycoolplaylist:serve:production"
             }
           }
         },
@@ -123,5 +123,5 @@
       }
     }
   },
-  "defaultProject": "unlistenedplaylist"
+  "defaultProject": "mycoolplaylist"
 }

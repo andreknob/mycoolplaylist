@@ -7,7 +7,7 @@ import { WebAPIService } from './service/spotify/web-api/web-api.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'unlistenedplaylist';
+  title = 'mycoolplaylist';
 
     constructor(private webAPIService: WebAPIService) {
     }
