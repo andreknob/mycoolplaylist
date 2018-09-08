@@ -10,6 +10,8 @@ const AUTHORIZATION = {
 }
 
 const CLIENT = {
+    ID: '993e260818e14852b08b78fc9e7055eb',
+    SECRET: 'a63f26997baf4b9ca627615bf7a2336a',
 }
 
 const OPTIONS = {
@@ -28,7 +30,7 @@ class SpotifyLogic extends AbstractLogic {
      * Returns spotify's interface for the user to authenticate.
      * @todo remove hard coded client id, transfer to env variable.
      */ 
-    static getRequestAuthorizationURI() {
+    static getAuthorizationURI() {
         const {SCOPES, REDIRECT_URI} = AUTHORIZATION;
         const stateValue = SpotifyStore.getStateValue();
 
@@ -40,7 +42,7 @@ class SpotifyLogic extends AbstractLogic {
         '&state=' + stateValue;
     }
 
-    static getRequestAccessURI({code, state}, res, responseEmitter) {
+    static getAccessToken({code, state}, res, responseEmitter) {
         if (!SpotifyStore.removeStateValue(state)) {
             return responseEmitter(res, {status: 500, message: 'No corresponding state found on SpotifyStore.'});
         }

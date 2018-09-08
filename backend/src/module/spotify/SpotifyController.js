@@ -10,19 +10,19 @@ class SpotifyController extends AbstractController {
     /**
      * Returns spotify's interface for the user to authenticate.
      */ 
-    static login(req, res) {
-        const response = SpotifyLogic.getRequestAuthorizationURI();
-        res.redirect(response);
+    static authorize(req, res) {
+        const response = SpotifyLogic.getAuthorizationURI();
+        res.send(response);
     }
 
     /**
      * Receives spotify's response for the user authentication.
-     * @param req has authorization code and the sent state (from the login method) on the url query 
+     * @param req has authorization code and the sent state (from the authorize method) on the url query 
      */ 
     static redirect(req, res) {
         const {error} = req.query;
         error ? SpotifyLogic.handleAccessDenied(req.query, res, this.responseEmitter) 
-        : SpotifyLogic.getRequestAccessURI(req.query, res, this.responseEmitter);
+        : SpotifyLogic.getAccessToken(req.query, res, this.responseEmitter);
     }
     
     /**
@@ -32,6 +32,7 @@ class SpotifyController extends AbstractController {
      */ 
     static responseEmitter(res, result) {
         res.status(result.status).json(result);
+        // res.redirect('http://localhost:4200/authorized');
     }
 }
 
