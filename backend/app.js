@@ -19,8 +19,12 @@ mongoose.connection.on('error', error => {
 
 const PORT = process.env.PORT || 8080;
 
+const corsOptions = {
+    origin: 'http://localhost:8080',
+    optionsSuccessStatus: 200
+}
 // adding cors
-app.use(cors());
+app.use(cors(corsOptions));
 // adding json
 app.use(bodyparser.json());
 // use routes

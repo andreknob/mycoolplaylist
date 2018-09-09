@@ -1,5 +1,7 @@
 const AbstractLogic = require('../../core/logic/AbstractLogic');
+const UserLogic = require('../user/UserLogic');
 const SpotifyStore = require('../spotify/SpotifyStore');
+const JsonHelper = require('../../core/helper/JsonHelper');
 const https = require("https");
 const querystring = require('querystring');
 
@@ -11,7 +13,7 @@ const AUTHORIZATION = {
 
 const CLIENT = {
     ID: '993e260818e14852b08b78fc9e7055eb',
-    SECRET: 'a63f26997baf4b9ca627615bf7a2336a',
+    SECRET: '',
 }
 
 const OPTIONS = {
@@ -42,9 +44,9 @@ class SpotifyLogic extends AbstractLogic {
         '&state=' + stateValue;
     }
 
-    static getAccessToken({code, state}, res, responseEmitter) {
+    static getAccessToken({code, state}, responseEmitter) {
         if (!SpotifyStore.removeStateValue(state)) {
-            return responseEmitter(res, {status: 500, message: 'No corresponding state found on SpotifyStore.'});
+            return responseEmitter({status: 500, message: 'No corresponding state found on SpotifyStore.'});
         }
         const {REDIRECT_URI} = AUTHORIZATION;
 
@@ -54,26 +56,36 @@ class SpotifyLogic extends AbstractLogic {
             redirect_uri: REDIRECT_URI,
         });
 
-        const req = https.request(OPTIONS, reqResponse => {
-            reqResponse.on('data', data => {
-                // responseEmitter(res, {status: 200, data: JSON.parse(data.toString())})
-                this.getUserInfo(JSON.parse(data.toString()).access_token, res, responseEmitter);
+        const req = https.request(OPTIONS, res => {
+            res.on('data', data => {
+                const {
+                    access_token: accessToken,
+                    scope,
+                    expires_in: expires_in,
+                    refresh_token: refreshToken
+                } = JsonHelper.parse(data);
+
+                this.getSpotifyUserInfo(accessToken, ({status, data, message}) => {
+                    if (status !== 200) return responseEmitter({status, message});
+
+                    UserLogic.getBySpotifyId(data.id).then((user) => {
+                        if (!user) {
+                            // create user, await
+                        }
+                        // create accessToken and persist, generate jwt token (separate post from generate jwt on UserLogic)
+                    });
+                });
             });
         });
           
         req.on('error', err => {
-            responseEmitter(res, {status: 500, message: err.message});
+            responseEmitter({status: 500, message: err.message});
         });
 
         req.end(postData);
     }
 
-    static handleAccessDenied({error, state}, res, responseEmitter) {
-        SpotifyStore.removeStateValue(state);
-        responseEmitter(res, {status: 401, message: error});
-    }
-
-    static getUserInfo(accessToken, res, responseEmitter) {
+    static getSpotifyUserInfo(accessToken, callback) {
         const options = {
             host: 'api.spotify.com',
             path: '/v1/me',
@@ -83,15 +95,20 @@ class SpotifyLogic extends AbstractLogic {
             }
         };
 
-        const req = https.request(options, reqResponse => {
-            reqResponse.on('data', data => responseEmitter(res, {status: 200, data: JSON.parse(data.toString())}));
+        const req = https.request(options, res => {
+            res.on('data', data => callback({status: 200, data: JsonHelper.parse(data)}));
         });
           
         req.on('error', err => {
-            responseEmitter(res, {status: 500, message: err.message});
+            callback({status: 500, message: err.message});
         });
 
         req.end();
+    }
+
+    static handleAccessDenied({error, state}, responseEmitter) {
+        SpotifyStore.removeStateValue(state);
+        responseEmitter({status: 401, message: error});
     }
 }
 
