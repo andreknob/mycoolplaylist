@@ -24,7 +24,8 @@ const corsOptions = {
     optionsSuccessStatus: 200
 }
 // adding cors
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 // adding json
 app.use(bodyparser.json());
 // use routes

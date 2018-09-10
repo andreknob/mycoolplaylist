@@ -40,13 +40,13 @@ class AbstractLogic {
     }
 
     /**
-     * Executes a query and returns the result/error.
+     * Executes a query and returns/throws the result/error.
      */
     static executeQuery(query) {
-        return query.then(docs => {
-            return {status: 200, docs};
-        }).catch(err => {
-            return {status: 500, err};
+        return query.then(data => {
+            return {status: 200, data};
+        }).catch(message => {
+            throw {status: 500, message};
         });
     }
 }

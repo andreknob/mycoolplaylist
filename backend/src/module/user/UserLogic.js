@@ -10,27 +10,50 @@ class UserLogic extends AbstractLogic {
     }
 
     static post(user) {
-        return super.post(user).then(({status, docs: created, err}) => {
-            if (status !== 200) return {status, err};
+        return super.post(user).then(({status, data: user}) => {
+            const jwtToken = UserLogic.generateJWT(user._id);
         
-            // create a token
-            const token = jwt.sign({id: created._id}, config.secret, {
-              expiresIn: 86400 // expires in 24 hours
-            });
-        
-            return {status, token, created};
+            return {status, jwtToken, user};
         });
     };
+
+    static generateJWT(id) {
+        return jwt.sign({id}, config.secret, {
+            expiresIn: 172800
+        });
+    }
 
     static me(responseEmitter, id) { 
         responseEmitter({status: 200, id});
     };
 
     /**
-     * Fetches a user by its spotifyId.
+     * Fetches a user by it's spotifyId.
      */ 
     static getBySpotifyId(spotifyId) {
-        return super.executeQuery(this.Model.findOne({'spotifyId': spotifyId}));
+        return super.executeQuery(this.Model.findOne({'spotifyId': spotifyId}, '_id')).then(({data}) => {
+            return data && data._id;
+        });
+    }
+
+    static createUserFromSpotifyUser(spotifyUser) {
+        const {
+            display_name: name,
+            email,
+            country,
+            external_urls: externalURLs,
+            images,
+            id: spotifyId,
+        } = spotifyUser;
+
+        return this.post({
+            name,
+            email,
+            country,
+            externalURLs,
+            images,
+            spotifyId
+        });
     }
 }
 
