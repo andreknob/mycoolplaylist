@@ -1,19 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AuthorizationService } from '../../service/spotify/authorization/authorization.service';
+import { WebAPIService } from '../../service/spotify/web-api/web-api.service';
+import { WindowRefService } from '../../service/window/window-ref.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [AuthorizationService, WebAPIService]
 })
 export class HomeComponent implements OnInit {
-  private userId: string;
 
-  constructor(private route: ActivatedRoute) {
-    this.route.params.subscribe(params => this.userId = params['id']);
+  constructor(private authorizationService: AuthorizationService, private webAPIService: WebAPIService,
+    private windowRefService: WindowRefService) {
   }
 
   ngOnInit() {
   }
 
+  getAuthorizationPage() {
+    this.authorizationService.getAuthorizationPage().subscribe(data => {
+        const {nativeWindow} = this.windowRefService;
+        const page = JSON.parse(JSON.stringify(data))._body;
+        nativeWindow.location.href = page;
+      },
+      error => console.log(error)
+    );
+  }
 }

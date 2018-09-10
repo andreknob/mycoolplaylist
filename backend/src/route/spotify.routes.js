@@ -6,5 +6,4 @@ router.get('/authorize', SpotifyController.authorize.bind(SpotifyController));
 
 router.get('/redirect', SpotifyController.redirect.bind(SpotifyController));
 
-
 module.exports = router;

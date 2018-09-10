@@ -1,7 +1,9 @@
-const AbstractLogic = require('../../core/logic/AbstractLogic');
+const UserLogic = require('../user/UserLogic');
+const AccessTokenLogic = require('./access-token/AccessTokenLogic');
 const SpotifyStore = require('../spotify/SpotifyStore');
-const https = require("https");
+const JsonHelper = require('../../core/helper/JsonHelper');
 const querystring = require('querystring');
+const https = require("https");
 
 const AUTHORIZATION = {
     SCOPES: 'user-read-private user-read-email',
@@ -9,9 +11,10 @@ const AUTHORIZATION = {
     REDIRECT_URI: 'http://localhost:8080/api/spotify/redirect',
 }
 
+// @todo remove hard coded client id and secret, transfer to env variable.
 const CLIENT = {
     ID: '993e260818e14852b08b78fc9e7055eb',
-    SECRET: 'a63f26997baf4b9ca627615bf7a2336a',
+    SECRET: '',
 }
 
 const OPTIONS = {
@@ -24,11 +27,10 @@ const OPTIONS = {
     }
 };
 
-class SpotifyLogic extends AbstractLogic {
+class SpotifyLogic {
 
     /**
-     * Returns spotify's interface for the user to authenticate.
-     * @todo remove hard coded client id, transfer to env variable.
+     * @returns spotify's interface for the user to authenticate.
      */ 
     static getAuthorizationURI() {
         const {SCOPES, REDIRECT_URI} = AUTHORIZATION;
@@ -42,10 +44,25 @@ class SpotifyLogic extends AbstractLogic {
         '&state=' + stateValue;
     }
 
-    static getAccessToken({code, state}, res, responseEmitter) {
+    /**
+     * Method to handle the redirect executed by the accounts.spotify's authorize endpoint.
+     * @param object obj containing the authorization code and state previously sent to the endpoint.
+     * @param function the method to emit the response.
+     */
+    static handleRedirect({code, state}, responseEmitter) {
         if (!SpotifyStore.removeStateValue(state)) {
-            return responseEmitter(res, {status: 500, message: 'No corresponding state found on SpotifyStore.'});
+            return responseEmitter({status: 500, message: 'No corresponding state found on SpotifyStore.'});
         }
+
+        this.requestAccessToken(code, responseEmitter);
+    }
+
+    /**
+     * Method to request an accessToken to the accounts.spotify's api/token endpoint.
+     * @param string the authorization code.
+     * @param function the method to emit the response.
+     */ 
+    static requestAccessToken(code, responseEmitter) {
         const {REDIRECT_URI} = AUTHORIZATION;
 
         const postData = querystring.stringify({
@@ -54,26 +71,58 @@ class SpotifyLogic extends AbstractLogic {
             redirect_uri: REDIRECT_URI,
         });
 
-        const req = https.request(OPTIONS, reqResponse => {
-            reqResponse.on('data', data => {
-                // responseEmitter(res, {status: 200, data: JSON.parse(data.toString())})
-                this.getUserInfo(JSON.parse(data.toString()).access_token, res, responseEmitter);
-            });
+        const now = Date.now();
+        const req = https.request(OPTIONS, res => {
+            res.on('data', this._handleAccessTokenResponse.bind(this, responseEmitter, now));
         });
           
         req.on('error', err => {
-            responseEmitter(res, {status: 500, message: err.message});
+            responseEmitter({status: 500, message: err.message});
         });
 
         req.end(postData);
     }
 
-    static handleAccessDenied({error, state}, res, responseEmitter) {
-        SpotifyStore.removeStateValue(state);
-        responseEmitter(res, {status: 401, message: error});
+    /**
+     * Creates/updates an accessToken and creates a new user if it doesn't exist yet.
+     * @param function the method to emit the response (in success, emits a new jsonWebToken).
+     * @param long the date (in ms) right before the request.
+     * @param object the response data containing the accessToken.
+     */ 
+    static _handleAccessTokenResponse(responseEmitter, now, data) {
+        const accessTokenObj = JsonHelper.parse(data);
+
+        this.getSpotifyUserInfo(accessTokenObj.access_token, async ({status, spotifyUser, message}) => {
+            if (status !== 200) return responseEmitter({status, message});
+
+            try {
+                const userId = await UserLogic.getBySpotifyId(spotifyUser.id);
+                let jsonWebToken;
+
+                if (!userId) {
+                    const {jwtToken, user: {_id: createdId}} = await UserLogic.createUserFromSpotifyUser(spotifyUser);
+                    jsonWebToken = jwtToken;
+
+                    await AccessTokenLogic.post(accessTokenObj, createdId, now);
+                } else {
+                    jsonWebToken = UserLogic.generateJWT(userId);
+
+                    await AccessTokenLogic.putByUserId(accessTokenObj, userId, now);
+                }
+
+                responseEmitter({status, jsonWebToken});
+            } catch (err) {
+                responseEmitter(err.status ? err : {status: 500, message: err.message});
+            }
+        });
     }
 
-    static getUserInfo(accessToken, res, responseEmitter) {
+    /**
+     * Gets the spotify user's info.
+     * @param string the spotify's generated access token for some user.
+     * @param function a function to be called back with the user's info.
+     */
+    static getSpotifyUserInfo(accessToken, callback) {
         const options = {
             host: 'api.spotify.com',
             path: '/v1/me',
@@ -83,15 +132,25 @@ class SpotifyLogic extends AbstractLogic {
             }
         };
 
-        const req = https.request(options, reqResponse => {
-            reqResponse.on('data', data => responseEmitter(res, {status: 200, data: JSON.parse(data.toString())}));
+        const req = https.request(options, res => {
+            res.on('data', data => callback({status: 200, spotifyUser: JsonHelper.parse(data)}));
         });
           
         req.on('error', err => {
-            responseEmitter(res, {status: 500, message: err.message});
+            callback({status: 500, message: err.message});
         });
 
         req.end();
+    }
+
+    /**
+     * This method is called if the user does not accepted the request.
+     * @param object an object containing the error and passed state.
+     * @param function the method to emit the response. 
+     */
+    static handleAccessDenied({error, state}, responseEmitter) {
+        SpotifyStore.removeStateValue(state);
+        responseEmitter({status: 401, message: error});
     }
 }
 

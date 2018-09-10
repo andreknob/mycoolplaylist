@@ -7,11 +7,13 @@ import { AppComponent } from './app.component';
 
 import { WindowRefService } from './service/window/window-ref.service';
 import { HomeComponent } from './component/home/home.component';
+import { AuthenticatedComponent } from './component/authenticated/authenticated.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    AuthenticatedComponent
   ],
   imports: [
     BrowserModule,

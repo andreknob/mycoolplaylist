@@ -21,8 +21,8 @@ class SpotifyController extends AbstractController {
      */ 
     static redirect(req, res) {
         const {error} = req.query;
-        error ? SpotifyLogic.handleAccessDenied(req.query, res, this.responseEmitter) 
-        : SpotifyLogic.getAccessToken(req.query, res, this.responseEmitter);
+        error ? SpotifyLogic.handleAccessDenied(req.query, this.responseEmitter.bind(this, res)) 
+        : SpotifyLogic.handleRedirect(req.query, this.responseEmitter.bind(this, res));
     }
     
     /**
@@ -31,8 +31,10 @@ class SpotifyController extends AbstractController {
      * @param result the result object (from node's request call) 
      */ 
     static responseEmitter(res, result) {
-        res.status(result.status).json(result);
-        // res.redirect('http://localhost:4200/authorized');
+        if (result.status !== 200) {
+            return res.status(result.status).json(result);
+        }
+        res.redirect(`http://localhost:4200/authenticated/${result.jsonWebToken}`);
     }
 }
 
