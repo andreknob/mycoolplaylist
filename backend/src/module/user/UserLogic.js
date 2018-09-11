@@ -23,17 +23,12 @@ class UserLogic extends AbstractLogic {
         });
     }
 
-    static me(responseEmitter, id) { 
-        responseEmitter({status: 200, id});
-    };
-
     /**
      * Fetches a user by it's spotifyId.
      */ 
     static getBySpotifyId(spotifyId) {
-        return super.executeQuery(this.Model.findOne({'spotifyId': spotifyId}, '_id')).then(({data}) => {
-            return data && data._id;
-        });
+        return super.executeQuery(this.Model.findOne({'spotifyId': spotifyId}, '_id'))
+            .then(({data}) => data && data._id);
     }
 
     static createUserFromSpotifyUser(spotifyUser) {

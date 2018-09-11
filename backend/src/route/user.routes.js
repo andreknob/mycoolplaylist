@@ -4,7 +4,7 @@ const verifyTokenMiddleware = require('../middleware/verifyToken.middleware');
 const getMiddleware = require('../middleware/get.middleware');
 const UserController = require('../module/user/UserController');
 
-router.get('/me', verifyTokenMiddleware, UserController.me.bind(UserController));
+router.get('/me', verifyTokenMiddleware, UserController.get.bind(UserController));
 
 router.get('/:id', getMiddleware, UserController.get.bind(UserController));
 
