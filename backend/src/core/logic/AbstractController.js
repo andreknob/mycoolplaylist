@@ -4,11 +4,11 @@ class AbstractController {
      * Fetches a specific doc by its id.
      */ 
     static async get(req, res) {
-        const {status, ...rest} = await this.Logic.get(req.params.id);
+        const {status, data, message} = await this.Logic.get(req.params.id);
         res.status(status);
 
-        if (status === 200) return res.json({...rest.data});
-        res.json(...rest.message);
+        if (status === 200) return res.json(data);
+        res.json(message);
     }
     
     /**

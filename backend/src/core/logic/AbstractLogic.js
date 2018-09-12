@@ -4,7 +4,12 @@ class AbstractLogic {
      * Fetches a specific doc by its id.
      */ 
     static get(_id) {
-        return this.executeQuery(this.Model.findById(_id));
+        return this.executeQuery(this.Model.findById(_id))
+            .then(({status, data}) => {
+                data = data.toObject();
+                delete data.__v;
+                return {status, data};
+            });
     }
 
     /**

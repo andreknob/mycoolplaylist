@@ -9,6 +9,15 @@ class UserLogic extends AbstractLogic {
         return UserModel;
     }
 
+    static get(id) {
+        return super.get(id).then(({status, data}) => {
+            data.images.some(img => img.url ? ((data.image = img), true) : false);
+            delete data.images;
+            return {status, data};
+        });
+    }
+
+
     static post(user) {
         return super.post(user).then(({status, data: user}) => {
             const jwtToken = UserLogic.generateJWT(user._id);

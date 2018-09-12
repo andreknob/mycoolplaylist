@@ -11,8 +11,11 @@ import { WindowRefService } from '../../service/window/window-ref.service';
 })
 export class HomeComponent implements OnInit {
 
+  user: object;
+
   constructor(private authorizationService: AuthorizationService, private webAPIService: WebAPIService,
     private windowRefService: WindowRefService) {
+      this.user = JSON.parse(localStorage.getItem('user')) || {};
   }
 
   ngOnInit() {
@@ -22,6 +25,7 @@ export class HomeComponent implements OnInit {
     this.authorizationService.getAuthorizationPage().subscribe(data => {
         const {nativeWindow} = this.windowRefService;
         const page = JSON.parse(JSON.stringify(data))._body;
+
         nativeWindow.location.href = page;
       },
       error => console.log(error)

@@ -13,14 +13,18 @@ export class AuthenticatedComponent {
     if (!localStorage.getItem('jwt')) {
       this.route.params.subscribe(params => localStorage.setItem('jwt', params['jwt']));
     }
+
     if (!localStorage.getItem('user')) {
       this.userService.getUserInfo().subscribe(
         data => {
           localStorage.setItem('user', data.text());
+          this.router.navigate(['']);
         },
         err => console.log(err)
       );
+      return;
     }
+
     this.router.navigate(['']);
   }
 
