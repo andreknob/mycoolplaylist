@@ -1,11 +1,18 @@
-<div class="topBar">
+<div class="top-bar">
   <div class="avatar">
-    <img src="{{user.image && user.image.url}}" alt="User's avatar" />
-
+    <img src="{{user.image && user.image.url}}" (click)="openProfile()" alt="Avatar" />
+  </div>
 </div>
-</div>
 
-<h2><button (click)="getAuthorizationPage()">Authorization</button></h2>
-<p>
-  home works!
-</p>
+<section>
+  <div>
+    <app-input [(value)]="value"></app-input>
+  </div>
+  <div>
+    {{value}}
+  </div>
+  <div>
+    <h2><button (click)="getAuthorizationPage()">Authorization</button></h2>
+  </div>
+</section>
+

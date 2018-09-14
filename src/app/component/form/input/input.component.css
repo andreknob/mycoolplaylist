@@ -1,0 +1,12 @@
+input {
+    font-size: 26px;
+    padding: 14px;
+    border: 1px solid #f3f3f5;
+    border-radius: 4px;
+}
+
+i {
+    position: relative;
+    left: -30px;
+    cursor: pointer;
+}
