@@ -3,16 +3,11 @@ section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    display: -webkit-flex; /* Safari */
-    -webkit-flex-direction: column; /* Safari 6.1+ */
-    -webkit-align-items: center; /* Safari 7.0+ */
 }
 
 .avatar {
     display: flex;
     justify-content: flex-end;
-    display: -webkit-flex; /* Safari */
-    -webkit-justify-content: flex-end; /* Safari 6.1+ */
     margin-top: 15px;
     margin-bottom: 10px;
     margin-right: 15px;

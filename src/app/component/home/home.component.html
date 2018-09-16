@@ -1,18 +1,30 @@
-<div class="top-bar">
+<div class="top-bar" *ngIf="user">
   <div class="avatar">
-    <img src="{{user.image && user.image.url}}" (click)="openProfile()" alt="Avatar" />
+    <img
+      src="{{user.image && user.image.url}}"
+      (click)="openProfile()"
+      alt="Avatar" />
   </div>
 </div>
 
 <section>
+  <h2>
+    We create a cool random playlist for you
+  </h2>
+  <h3>
+    type in an artist to be used as base
+  </h3>
   <div>
-    <app-input [(value)]="value"></app-input>
+    <app-auto-complete [(value)]="value" [onClickSearch]="handleClickSearch"></app-auto-complete>
   </div>
   <div>
     {{value}}
   </div>
-  <div>
-    <h2><button (click)="getAuthorizationPage()">Authorization</button></h2>
-  </div>
+  <h3>
+      or
+  </h3>
+  <app-button [title]="'use your recently played songs'"></app-button>
+
+  <app-button [title]="'Authorization'" (click)="getAuthorizationPage()"></app-button>
 </section>
 

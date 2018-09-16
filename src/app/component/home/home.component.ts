@@ -13,12 +13,11 @@ import User from '../../model/user';
 export class HomeComponent implements OnInit {
 
   user: User;
-  value: string;
+  value = 'test';
 
   constructor(private authorizationService: AuthorizationService, private webAPIService: WebAPIService,
     private windowRefService: WindowRefService) {
       this.user = JSON.parse(localStorage.getItem('user')) || {};
-      this.value = 'test';
   }
 
   ngOnInit() {
@@ -40,5 +39,8 @@ export class HomeComponent implements OnInit {
     const {externalURLs: {spotify: spotifyURL}} = this.user;
 
     nativeWindow.open(spotifyURL);
+  }
+
+  handleClickSearch = () => {
   }
 }

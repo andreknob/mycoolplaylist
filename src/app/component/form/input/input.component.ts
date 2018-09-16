@@ -7,13 +7,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class InputComponent {
 
-  @Input('value') value: string;
   @Output() valueChange: EventEmitter<String> = new EventEmitter<String>();
 
   constructor() { }
 
-  onChange(newValue) {
-    this.value = newValue;
-    this.valueChange.emit(this.value);
+  @Input()
+  set value(value: string) {
+    this.valueChange.emit(value);
   }
+
 }

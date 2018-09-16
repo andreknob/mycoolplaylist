@@ -1,0 +1,38 @@
+.auto-complete {
+    width: 500px; 
+    position: relative;
+}
+
+i {
+    color: #959595;
+    transition: color 0.5s;
+}
+
+i:hover {
+    color: #37c;
+}
+
+.icon-div {
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.result {
+    border: 1px solid #f3f3f5;
+    border-radius: 4px;
+    padding: 5px;
+    padding-left: 10px;
+    cursor: pointer;
+    font-weight: 100;
+}
+
+.result:hover {
+    background-color: #395;
+    color: #fff;
+}

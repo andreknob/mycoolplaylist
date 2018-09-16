@@ -10,13 +10,17 @@ import { WindowRefService } from './service/window/window-ref.service';
 import { HomeComponent } from './component/home/home.component';
 import { AuthenticatedComponent } from './component/authenticated/authenticated.component';
 import { InputComponent } from './component/form/input/input.component';
+import { ButtonComponent } from './component/form/button/button.component';
+import { AutoCompleteComponent } from './component/form/auto-complete/auto-complete.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     AuthenticatedComponent,
-    InputComponent
+    InputComponent,
+    ButtonComponent,
+    AutoCompleteComponent
   ],
   imports: [
     BrowserModule,
