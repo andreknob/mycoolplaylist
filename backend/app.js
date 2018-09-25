@@ -6,6 +6,7 @@ const path = require('path');
 
 const app = express();
 
+mongoose.set('debug', true);
 // @todo search how to put the password on the environment
 mongoose.connect('mongodb://mycoolplaylistuser:mycoolplaylistpassword123@ds149252.mlab.com:49252/mycoolplaylistdb', {useNewUrlParser: true});
 

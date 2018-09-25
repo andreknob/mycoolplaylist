@@ -10,7 +10,7 @@ export class UserService {
 
   getUserInfo() {
     return this.http.get('http://localhost:8080/api/user/me',
-      { headers: new Headers({ 'x-access-token': localStorage.getItem('jwt') }) }
+      {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
     );
   }
 }

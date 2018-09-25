@@ -11,8 +11,7 @@ class SpotifyController extends AbstractController {
      * Returns spotify's interface for the user to authenticate.
      */ 
     static authorize(req, res) {
-        const response = SpotifyLogic.getAuthorizationURI();
-        res.send(response);
+        res.send(SpotifyLogic.getAuthorizationURI());
     }
 
     /**
@@ -23,6 +22,18 @@ class SpotifyController extends AbstractController {
         const {error} = req.query;
         error ? SpotifyLogic.handleAccessDenied(req.query, this.responseEmitter.bind(this, res)) 
         : SpotifyLogic.handleRedirect(req.query, this.responseEmitter.bind(this, res));
+    }
+
+    /**
+     * Returns spotify's top artists/tracks for an user.
+     * @param req has the returning object type (artist/track) in the params 
+     */ 
+    static top(req, res) {
+        const {accessToken, type} = req.params;
+        SpotifyLogic.getTop(accessToken, type, (result) => {
+            const {status, ...rest} = result;
+            res.status(status).json({...rest});
+        });
     }
     
     /**

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, Input, Output, ElementRef, EventEmitter, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-auto-complete',
@@ -15,24 +15,22 @@ export class AutoCompleteComponent {
 
   @Output() valueChange: EventEmitter<String> = new EventEmitter<String>();
 
-  constructor() {
+  constructor(private eRef: ElementRef) {
     this.results = ['item 1', 'item 2'];
     this._displayAutoComplete = false;
   }
 
-  handleClick($event: Event) {
-    $event.stopPropagation();
-    this.displayAutoComplete = !this.displayAutoComplete;
-  }
-
   @HostListener('document:click', ['$event'])
   clickedOutside($event) {
-    this.displayAutoComplete = false;
+    if (this.eRef.nativeElement.contains($event.target)) {
+      this.displayAutoComplete = !this.displayAutoComplete;
+    } else {
+      this.displayAutoComplete = false;
+    }
   }
 
-  handleClickSearch($event: Event) {
+  handleClickSearch() {
     if (this.onClickSearch) {
-      $event.stopPropagation();
       this.onClickSearch();
     }
   }

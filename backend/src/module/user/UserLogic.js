@@ -17,7 +17,6 @@ class UserLogic extends AbstractLogic {
         });
     }
 
-
     static post(user) {
         return super.post(user).then(({status, data: user}) => {
             const jwtToken = UserLogic.generateJWT(user._id);

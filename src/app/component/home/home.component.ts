@@ -13,7 +13,6 @@ import User from '../../model/user';
 export class HomeComponent implements OnInit {
 
   user: User;
-  value = 'test';
 
   constructor(private authorizationService: AuthorizationService, private webAPIService: WebAPIService,
     private windowRefService: WindowRefService) {
@@ -26,9 +25,7 @@ export class HomeComponent implements OnInit {
   getAuthorizationPage() {
     this.authorizationService.getAuthorizationPage().subscribe(data => {
         const {nativeWindow} = this.windowRefService;
-        const page = JSON.parse(JSON.stringify(data))._body;
-
-        nativeWindow.location.href = page;
+        nativeWindow.location.href = data.text();
       },
       error => console.log(error)
     );
@@ -42,5 +39,14 @@ export class HomeComponent implements OnInit {
   }
 
   handleClickSearch = () => {
+  }
+
+  getTop() {
+    this.webAPIService.getTop().subscribe(data => {
+        const result = JSON.parse(data.text());
+        console.log(result);
+      },
+      error => console.log(error)
+    );
   }
 }

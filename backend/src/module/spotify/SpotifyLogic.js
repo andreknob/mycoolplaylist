@@ -6,7 +6,7 @@ const querystring = require('querystring');
 const https = require("https");
 
 const AUTHORIZATION = {
-    SCOPES: 'user-read-private user-read-email',
+    SCOPES: 'user-read-private user-read-email user-top-read',
     // @todo build redirect page
     REDIRECT_URI: 'http://localhost:8080/api/spotify/redirect',
 }
@@ -62,7 +62,7 @@ class SpotifyLogic {
      * @param string the authorization code.
      * @param function the method to emit the response.
      */ 
-    static requestAccessToken(code, responseEmitter) {
+    static requestAccessToken(code, responseEmitter, userId) {
         const {REDIRECT_URI} = AUTHORIZATION;
 
         const postData = querystring.stringify({
@@ -73,7 +73,7 @@ class SpotifyLogic {
 
         const now = Date.now();
         const req = https.request(OPTIONS, res => {
-            res.on('data', this._handleAccessTokenResponse.bind(this, responseEmitter, now));
+            res.on('data', this._handleAccessTokenResponse.bind(this, responseEmitter, now, userId));
         });
           
         req.on('error', err => {
@@ -89,15 +89,17 @@ class SpotifyLogic {
      * @param long the date (in ms) right before the request.
      * @param object the response data containing the accessToken.
      */ 
-    static _handleAccessTokenResponse(responseEmitter, now, data) {
+    static _handleAccessTokenResponse(responseEmitter, now, userId, data) {
         const accessTokenObj = JsonHelper.parse(data);
 
         this.getSpotifyUserInfo(accessTokenObj.access_token, async ({status, spotifyUser, message}) => {
             if (status !== 200) return responseEmitter({status, message});
 
             try {
-                const userId = await UserLogic.getBySpotifyId(spotifyUser.id);
                 let jsonWebToken;
+                if (!userId) {
+                    userId = await UserLogic.getBySpotifyId(spotifyUser.id);
+                }
 
                 if (!userId) {
                     const {jwtToken, user: {_id: createdId}} = await UserLogic.createUserFromSpotifyUser(spotifyUser);
@@ -110,7 +112,7 @@ class SpotifyLogic {
                     await AccessTokenLogic.putByUserId(accessTokenObj, userId, now);
                 }
 
-                responseEmitter({status, jsonWebToken});
+                responseEmitter({status, jsonWebToken, accessToken: accessTokenObj.access_token});
             } catch (err) {
                 responseEmitter(err.status ? err : {status: 500, message: err.message});
             }
@@ -144,6 +146,37 @@ class SpotifyLogic {
     }
 
     /**
+     * Gets the spotify's top artists/tracks for an user.
+     * @param type the returning object type (artist/track)
+     * @param function a function to be called back with the user's info.
+     */
+    static getTop(accessToken, type, callback) {
+        
+        const options = {
+            host: 'api.spotify.com',
+            path: `/v1/me/top/${type}?limit=25`,
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+            }
+        };
+
+        const req = https.request(options, res => {
+            let fullData = '';
+            res.on('data', data => {
+                fullData += data;
+            });
+            res.on('end', () => {
+                callback({status: 200, data: JSON.parse(fullData)});
+            });
+        });
+
+        req.on('error', err => callback({status: 500, message: err.message}));
+
+        req.end();
+    }
+
+    /**
      * This method is called if the user does not accepted the request.
      * @param object an object containing the error and passed state.
      * @param function the method to emit the response. 
@@ -151,7 +184,7 @@ class SpotifyLogic {
     static handleAccessDenied({error, state}, responseEmitter) {
         SpotifyStore.removeStateValue(state);
         responseEmitter({status: 401, message: error});
-    }
+    } 
 }
 
 module.exports = SpotifyLogic;

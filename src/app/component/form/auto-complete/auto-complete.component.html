@@ -1,7 +1,7 @@
-<div class="auto-complete" (click)="handleClick($event)">
+<div class="auto-complete">
   <app-input [(value)]="value"></app-input>
   <span class="icon-div">
-      <i class="fas fa-search" (click)="handleClickSearch($event)"></i>
+      <i class="fas fa-search" (click)="handleClickSearch()"></i>
   </span>
   <ng-container *ngIf="results && displayAutoComplete">
     <div *ngFor="let result of results">
