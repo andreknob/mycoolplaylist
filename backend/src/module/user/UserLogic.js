@@ -9,6 +9,14 @@ class UserLogic extends AbstractLogic {
         return UserModel;
     }
 
+    static get(id) {
+        return super.get(id).then(({status, data}) => {
+            data.images.some(img => img.url ? ((data.image = img), true) : false);
+            delete data.images;
+            return {status, data};
+        });
+    }
+
     static post(user) {
         return super.post(user).then(({status, data: user}) => {
             const jwtToken = UserLogic.generateJWT(user._id);
@@ -23,17 +31,12 @@ class UserLogic extends AbstractLogic {
         });
     }
 
-    static me(responseEmitter, id) { 
-        responseEmitter({status: 200, id});
-    };
-
     /**
      * Fetches a user by it's spotifyId.
      */ 
     static getBySpotifyId(spotifyId) {
-        return super.executeQuery(this.Model.findOne({'spotifyId': spotifyId}, '_id')).then(({data}) => {
-            return data && data._id;
-        });
+        return super.executeQuery(this.Model.findOne({'spotifyId': spotifyId}, '_id'))
+            .then(({data}) => data && data._id);
     }
 
     static createUserFromSpotifyUser(spotifyUser) {

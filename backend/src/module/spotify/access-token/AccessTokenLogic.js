@@ -18,7 +18,7 @@ class AccessTokenLogic extends AbstractLogic {
         return super.post({
             accessToken,
             scope,
-            expireDate: new Date(now + (expiresIn * 1000)),
+            expireDate: now + (expiresIn * 1000),
             refreshToken,
             userId
         });
@@ -37,10 +37,28 @@ class AccessTokenLogic extends AbstractLogic {
             {$set: {
                 accessToken,
                 scope,
-                expireDate: new Date(now + (expiresIn * 1000)),
+                expireDate: now + (expiresIn * 1000),
                 refreshToken,
             }}
         ));
+    }
+
+    /**
+     * Fetches an access token by it's userId.
+     */ 
+    static getByUserId(userId) {
+        return super.executeQuery(this.Model.findOne({'userId': userId})).then(result => {
+            if (result.status === 200) {
+                return {
+                    ...result,
+                    data: {
+                        ...result.data.toObject(),
+                        expireDate: new Date(result.data.expireDate),
+                    }
+                }
+            }
+            return result;
+        });
     }
 }
 

@@ -10,7 +10,7 @@ const accessTokenSchema = new mongoose.Schema({
         required: true,
     },
     expireDate: {
-        type: Date,
+        type: Number,
         required: true,
     },
     refreshToken: {
