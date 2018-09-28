@@ -37,6 +37,18 @@ class SpotifyController extends AbstractController {
     }
     
     /**
+     * Returns an artist's related artists.
+     * @param req has the artist's id in the params 
+     */ 
+    static getRelatedArtists(req, res) {
+        const {accessToken, artistId} = req.params;
+        SpotifyLogic.getRelatedArtists(accessToken, artistId, (result) => {
+            const {status, ...rest} = result;
+            res.status(status).json({...rest});
+        });
+    }
+    
+    /**
      * A response emitter.
      * @param res the response object (from express' request handler) 
      * @param result the result object (from node's request call) 

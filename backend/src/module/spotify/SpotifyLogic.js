@@ -5,9 +5,12 @@ const JsonHelper = require('../../core/helper/JsonHelper');
 const querystring = require('querystring');
 const https = require("https");
 
+const METHODS = {
+    GET: 'GET',
+}
+
 const AUTHORIZATION = {
     SCOPES: 'user-read-private user-read-email user-top-read',
-    // @todo build redirect page
     REDIRECT_URI: 'http://localhost:8080/api/spotify/redirect',
 }
 
@@ -62,23 +65,26 @@ class SpotifyLogic {
      * @param string the authorization code.
      * @param function the method to emit the response.
      */ 
-    static requestAccessToken(code, responseEmitter, userId) {
+    static requestAccessToken(code, responseEmitter, userId, isRefresh = false) {
         const {REDIRECT_URI} = AUTHORIZATION;
 
-        const postData = querystring.stringify({
-            grant_type: 'authorization_code',
-            code,
-            redirect_uri: REDIRECT_URI,
-        });
+        const postData = querystring.stringify(
+            isRefresh ? {
+                grant_type: 'refresh_token',
+                refresh_token: code,
+            } : {
+                grant_type: 'authorization_code',
+                code,
+                redirect_uri: REDIRECT_URI,
+            }
+        );
 
         const now = Date.now();
         const req = https.request(OPTIONS, res => {
             res.on('data', this._handleAccessTokenResponse.bind(this, responseEmitter, now, userId));
         });
           
-        req.on('error', err => {
-            responseEmitter({status: 500, message: err.message});
-        });
+        req.on('error', err => responseEmitter({status: 500, message: err.message}));
 
         req.end(postData);
     }
@@ -91,6 +97,10 @@ class SpotifyLogic {
      */ 
     static _handleAccessTokenResponse(responseEmitter, now, userId, data) {
         const accessTokenObj = JsonHelper.parse(data);
+
+        if (accessTokenObj.error) {
+            return responseEmitter({status: 500, message: accessTokenObj.error_description});
+        }
 
         this.getSpotifyUserInfo(accessTokenObj.access_token, async ({status, spotifyUser, message}) => {
             if (status !== 200) return responseEmitter({status, message});
@@ -146,21 +156,40 @@ class SpotifyLogic {
     }
 
     /**
-     * Gets the spotify's top artists/tracks for an user.
+     * Gets the top artists/tracks for an user.
      * @param type the returning object type (artist/track)
      * @param function a function to be called back with the user's info.
      */
     static getTop(accessToken, type, callback) {
-        
-        const options = {
+        const path = `/v1/me/top/${type}?limit=15`;
+        const options = this._getCommonOptions(accessToken, path, METHODS.GET);
+
+        this._commonRequest(options, callback);
+    }
+
+    /**
+     * Gets an artist's related artists.
+     * @param function a function to be called back with the info.
+     */
+    static getRelatedArtists(accessToken, artistId, callback) {
+        const path = `/v1/artists/${artistId}/related-artists`;
+        const options = this._getCommonOptions(accessToken, path, METHODS.GET);
+
+        this._commonRequest(options, callback);
+    }
+
+    static _getCommonOptions(accessToken, path, method) {
+        return {
             host: 'api.spotify.com',
-            path: `/v1/me/top/${type}?limit=25`,
-            method: 'GET',
+            path,
+            method,
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
             }
         };
+    }
 
+    static _commonRequest(options, callback) {
         const req = https.request(options, res => {
             let fullData = '';
             res.on('data', data => {
@@ -177,7 +206,7 @@ class SpotifyLogic {
     }
 
     /**
-     * This method is called if the user does not accepted the request.
+     * This method is called if the user did not accept the request.
      * @param object an object containing the error and passed state.
      * @param function the method to emit the response. 
      */

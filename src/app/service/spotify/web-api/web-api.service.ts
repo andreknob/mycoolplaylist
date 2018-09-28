@@ -19,7 +19,14 @@ export class WebAPIService {
   }
 
   getTop() {
-    return this.http.get('http://localhost:8080/api/spotify/top/tracks',
+    return this.http.get('http://localhost:8080/api/spotify/top/artists',
+      {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
+    );
+  }
+
+  getRelatedArtists() {
+    const id = '2aaLAng2L2aWD2FClzwiep';
+    return this.http.get(`http://localhost:8080/api/spotify/relatedArtists/${id}`,
       {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
     );
   }

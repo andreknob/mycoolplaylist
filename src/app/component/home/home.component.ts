@@ -49,4 +49,13 @@ export class HomeComponent implements OnInit {
       error => console.log(error)
     );
   }
+
+  getRelatedArtists() {
+    this.webAPIService.getRelatedArtists().subscribe(data => {
+        const result = JSON.parse(data.text());
+        console.log(result);
+      },
+      error => console.log(error)
+    );
+  }
 }

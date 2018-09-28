@@ -10,4 +10,6 @@ router.get('/redirect', SpotifyController.redirect.bind(SpotifyController));
 
 router.get('/top/:type', verifyJWToken, verifyAccessToken, SpotifyController.top.bind(SpotifyController));
 
+router.get('/relatedArtists/:artistId', verifyJWToken, verifyAccessToken, SpotifyController.getRelatedArtists.bind(SpotifyController));
+
 module.exports = router;
