@@ -58,4 +58,13 @@ export class HomeComponent implements OnInit {
       error => console.log(error)
     );
   }
+
+  getPlaylistFromTopArtists() {
+    this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
+        const result = JSON.parse(data.text());
+        console.log(result);
+      },
+      error => console.log(error)
+    );
+  }
 }

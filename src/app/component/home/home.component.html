@@ -9,10 +9,10 @@
 
 <section>
   <h2>
-    We create a cool random playlist for you
+    We create a cool playlist for you
   </h2>
   <h3>
-    type in an artist to be used as base
+    just type in an artist
   </h3>
   <div>
     <app-auto-complete [(value)]="value" [onClickSearch]="handleClickSearch"></app-auto-complete>
@@ -30,5 +30,7 @@
   <app-button [title]="'Get Top'" (click)="getTop()"></app-button>
 
   <app-button [title]="'Get Related'" (click)="getRelatedArtists()"></app-button>
+  
+  <app-button [title]="'Get Playlist'" (click)="getPlaylistFromTopArtists()"></app-button>
 </section>
 

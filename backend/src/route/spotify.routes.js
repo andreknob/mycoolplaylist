@@ -12,4 +12,6 @@ router.get('/top/:type', verifyJWToken, verifyAccessToken, SpotifyController.top
 
 router.get('/relatedArtists/:artistId', verifyJWToken, verifyAccessToken, SpotifyController.getRelatedArtists.bind(SpotifyController));
 
+router.get('/playlistFromTopArtists', verifyJWToken, verifyAccessToken, SpotifyController.getPlaylistFromTopArtists.bind(SpotifyController));
+
 module.exports = router;

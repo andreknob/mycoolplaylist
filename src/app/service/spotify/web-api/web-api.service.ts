@@ -30,4 +30,10 @@ export class WebAPIService {
       {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
     );
   }
+
+  getPlaylistFromTopArtists() {
+    return this.http.get(`http://localhost:8080/api/spotify/playlistFromTopArtists`,
+      {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
+    );
+  }
 }
