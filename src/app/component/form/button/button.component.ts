@@ -8,6 +8,7 @@ import { Component, Input } from '@angular/core';
 export class ButtonComponent {
 
   @Input('title') title: string;
+  @Input('icon') icon: string;
   @Input('onClick') onClick: Function;
 
   constructor() { }

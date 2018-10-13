@@ -1,11 +1,11 @@
 <div class="auto-complete">
-  <app-input [(value)]="value"></app-input>
+  <app-input [(value)]="value" [placeholder]="placeholder"></app-input>
   <span class="icon-div">
       <i class="fas fa-search" (click)="handleClickSearch()"></i>
   </span>
-  <ng-container *ngIf="results && displayAutoComplete">
+  <div class="results-container" *ngIf="results && displayAutoComplete">
     <div *ngFor="let result of results">
       <div class="result">{{result}}</div>
     </div>
-  </ng-container>    
+  </div>    
 </div>

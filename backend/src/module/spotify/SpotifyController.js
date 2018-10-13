@@ -25,30 +25,6 @@ class SpotifyController extends AbstractController {
     }
 
     /**
-     * Returns spotify's top artists/tracks for an user.
-     * @param req has the returning object type (artist/track) in the params 
-     */ 
-    static top(req, res) {
-        const {accessToken, type} = req.params;
-        SpotifyLogic.getTop(accessToken, type, (result) => {
-            const {status, ...rest} = result;
-            res.status(status).json({...rest});
-        });
-    }
-    
-    /**
-     * Returns an artist's related artists.
-     * @param req has the artist's id in the params 
-     */ 
-    static getRelatedArtists(req, res) {
-        const {accessToken, artistId} = req.params;
-        SpotifyLogic.getRelatedArtists(accessToken, artistId, (result) => {
-            const {status, ...rest} = result;
-            res.status(status).json({...rest});
-        });
-    }
-
-    /**
      * Returns a randomly generated playlist based on the user's top artists. 
      */ 
     static getPlaylistFromTopArtists(req, res) {

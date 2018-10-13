@@ -1,5 +1,6 @@
-<div class="top-bar" *ngIf="user">
-  <div class="avatar">
+<div class="top-bar" >
+  <app-button *ngIf="!user" icon="fab fa-spotify" [title]="'Authorization'" (click)="getAuthorizationPage()"></app-button>
+  <div *ngIf="user" class="avatar">
     <img
       src="{{user.image && user.image.url}}"
       (click)="openProfile()"
@@ -7,15 +8,15 @@
   </div>
 </div>
 
+<app-yt-iframe></app-yt-iframe>
+
 <section>
   <h2>
     We create a cool playlist for you
   </h2>
-  <h3>
-    just type in an artist
-  </h3>
+
   <div>
-    <app-auto-complete [(value)]="value" [onClickSearch]="handleClickSearch"></app-auto-complete>
+    <app-auto-complete [(value)]="value" [onClickSearch]="handleClickSearch" placeholder="just type in an artist"></app-auto-complete>
   </div>
   <div>
     {{value}}
@@ -23,14 +24,10 @@
   <h3>
       or
   </h3>
-  <app-button [title]="'use your top songs'"></app-button>
+  <app-button [title]="'use your top songs'" (click)="getPlaylistFromTopArtists()"></app-button>
 
-  <app-button [title]="'Authorization'" (click)="getAuthorizationPage()"></app-button>
-  
-  <app-button [title]="'Get Top'" (click)="getTop()"></app-button>
+  <!--<app-button [title]="'Authorization'" (click)="getAuthorizationPage()"></app-button>-->
 
-  <app-button [title]="'Get Related'" (click)="getRelatedArtists()"></app-button>
-  
-  <app-button [title]="'Get Playlist'" (click)="getPlaylistFromTopArtists()"></app-button>
+
 </section>
 

@@ -12,11 +12,12 @@ export class AutoCompleteComponent {
   private _displayAutoComplete;
 
   @Input() onClickSearch: Function;
+  @Input() placeholder: String;
 
   @Output() valueChange: EventEmitter<String> = new EventEmitter<String>();
 
   constructor(private eRef: ElementRef) {
-    this.results = ['item 1', 'item 2'];
+    this.results = ['item 1', 'item 2', 'item 3'];
     this._displayAutoComplete = false;
   }
 

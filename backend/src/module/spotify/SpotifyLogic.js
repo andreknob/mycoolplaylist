@@ -179,21 +179,34 @@ class SpotifyLogic {
     }
 
     /**
+     * Gets an artist's top tracks.
+     */
+    static getTopTracksByArtist(accessToken, artistId, callback) {
+        const path = `/v1/artists/${artistId}/top-tracks?market=from_token`;
+        const options = this._getCommonOptions(accessToken, path, METHODS.GET);
+
+        this._commonRequest(options, callback);
+    }
+
+    /**
      * Returns a randomly generated playlist based on the user's top artists. 
      * @param function a function to be called back with the info.
      */
     static async getPlaylistFromTopArtists(accessToken, callback) {
         try {
             const {data: {items: topArtists}} = await this._promiseCall(this.getTop.bind(this, accessToken, 'artists'));
-            const promises = [];
             const playlistArtists = [];
-            topArtists.forEach(artist => {
-                promises.push(this._promiseCall(this.getRelatedArtists.bind(this, accessToken, artist.id)));
-            });
-            Promise.all(promises).then(results => {
-                results.forEach(({data: {artists: relatedArtists}}) => this._pushFiveRandom(topArtists, relatedArtists, playlistArtists));
-                callback({status: 200, playlistArtists});
-            });
+            let promises = [];
+
+            topArtists.forEach(artist => promises.push(this._promiseCall(this.getRelatedArtists.bind(this, accessToken, artist.id))));
+
+            let results = await Promise.all(promises);
+            results.forEach(({data: {artists: relatedArtists}}) => this._pushRandomRelatedArtists(topArtists, relatedArtists, playlistArtists));
+
+            promises = [];
+            playlistArtists.forEach(artist => promises.push(this._promiseCall(this.getTopTracksByArtist.bind(this, accessToken, artist.id))));
+
+            callback({status: 200, playlistTracks: this._pushRandomTracks(await Promise.all(promises))}); 
         } catch (err) {
             console.log(err);
         }
@@ -230,8 +243,8 @@ class SpotifyLogic {
         return new Promise(resolve => callback(result => resolve(result)));
     }
 
-    static _pushFiveRandom(topArtists, relatedArtists, playlistArtists) {
-        for (let i = 0; i < 5 && relatedArtists.length > 0; i++) {
+    static _pushRandomRelatedArtists(topArtists, relatedArtists, playlistArtists) {
+        for (let i = 0; i < 3 && relatedArtists.length > 0; i++) {
             const index = Math.trunc(Math.random() * relatedArtists.length);
             const artist = relatedArtists[index];
 
@@ -243,6 +256,20 @@ class SpotifyLogic {
             }
             playlistArtists.push(artist);
         }
+    }
+
+    static _pushRandomTracks(artistsTracks) {
+        const playlist = [];
+        for (let i = 0;  i < 50 && artistsTracks.length > 0; i++) {
+            const outerIndex = Math.trunc(Math.random() * artistsTracks.length);
+            const innerIndex = Math.trunc(Math.random() * artistsTracks[outerIndex].data.tracks.length);
+
+            playlist.push(artistsTracks[outerIndex].data.tracks.splice(innerIndex, 1)[0]);
+            if (artistsTracks[outerIndex].data.tracks.length === 0) {
+                artistsTracks.splice(outerIndex, 1);
+            }
+        }
+        return playlist;
     }
 
     /**

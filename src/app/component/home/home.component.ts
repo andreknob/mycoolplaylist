@@ -16,7 +16,9 @@ export class HomeComponent implements OnInit {
 
   constructor(private authorizationService: AuthorizationService, private webAPIService: WebAPIService,
     private windowRefService: WindowRefService) {
-      this.user = JSON.parse(localStorage.getItem('user')) || {};
+      if (localStorage.getItem('user')) {
+        this.user = JSON.parse(localStorage.getItem('user')) || {};
+      }
   }
 
   ngOnInit() {
@@ -41,28 +43,14 @@ export class HomeComponent implements OnInit {
   handleClickSearch = () => {
   }
 
-  getTop() {
-    this.webAPIService.getTop().subscribe(data => {
-        const result = JSON.parse(data.text());
-        console.log(result);
-      },
-      error => console.log(error)
-    );
-  }
-
-  getRelatedArtists() {
-    this.webAPIService.getRelatedArtists().subscribe(data => {
-        const result = JSON.parse(data.text());
-        console.log(result);
-      },
-      error => console.log(error)
-    );
-  }
-
   getPlaylistFromTopArtists() {
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
-        const result = JSON.parse(data.text());
-        console.log(result);
+        const {playlistTracks} = JSON.parse(data.text());
+        const arr = [];
+        playlistTracks.forEach(track => {
+          arr.push({artist: track.artists[0].name, trackName: track.name});
+        });
+        console.table(arr);
       },
       error => console.log(error)
     );
