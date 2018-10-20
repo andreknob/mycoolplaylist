@@ -212,6 +212,16 @@ class SpotifyLogic {
         }
     }
 
+    /**
+     * Search for artists. 
+     */ 
+    static search(accessToken, searchTerm, callback) {
+        const path = `/v1/search?q=${encodeURI(searchTerm)}&type=artist&market=from_token`;
+        const options = this._getCommonOptions(accessToken, path, METHODS.GET);
+
+        this._commonRequest(options, callback);
+    }
+
     static _getCommonOptions(accessToken, path, method) {
         return {
             host: 'api.spotify.com',

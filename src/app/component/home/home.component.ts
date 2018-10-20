@@ -40,7 +40,8 @@ export class HomeComponent implements OnInit {
     nativeWindow.open(spotifyURL);
   }
 
-  handleClickSearch = () => {
+  search = (searchTerm) => {
+    return this.webAPIService.search(searchTerm);
   }
 
   getPlaylistFromTopArtists() {

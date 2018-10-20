@@ -13,4 +13,10 @@ export class WebAPIService {
       {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
     );
   }
+
+  search(searchTerm = '') {
+    return this.http.get(`http://localhost:8080/api/spotify/search/${encodeURI(searchTerm)}`,
+      {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
+    );
+  }
 }

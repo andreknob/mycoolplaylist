@@ -34,6 +34,18 @@ class SpotifyController extends AbstractController {
             res.status(status).json({...rest});
         });
     }
+
+    /**
+     * Returns the results of a search. 
+     */ 
+    static search(req, res) {
+        const {accessToken} = req.params;
+        SpotifyLogic.search(accessToken, req.params.searchTerm, (result) => {
+            const {status, ...rest} = result;
+            const items = {...rest}.data.artists.items.map(({id, name}) => ({id, name}));
+            res.status(status).json(items);
+        });
+    }
     
     /**
      * A response emitter.

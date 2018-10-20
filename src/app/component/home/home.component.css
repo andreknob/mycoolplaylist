@@ -24,3 +24,24 @@ section {
     object-fit: cover;
     cursor: pointer;
 }
+
+.back {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.back-color {
+    background: #121242;
+    background: -webkit-linear-gradient(-45deg,#121242,#725aff);
+    background: linear-gradient(135deg,#121242,#725aff);
+}
+
+.back-image {
+    background-image: url("/assets/images/background.jpeg");
+    background-size: cover;
+    background-position: 50%;
+    mix-blend-mode: multiply;
+}

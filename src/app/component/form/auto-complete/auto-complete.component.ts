@@ -11,13 +11,13 @@ export class AutoCompleteComponent {
   private _results;
   private _displayAutoComplete;
 
-  @Input() onClickSearch: Function;
+  @Input() search: Function;
   @Input() placeholder: String;
 
   @Output() valueChange: EventEmitter<String> = new EventEmitter<String>();
 
   constructor(private eRef: ElementRef) {
-    this.results = ['item 1', 'item 2', 'item 3'];
+    this.results = [];
     this._displayAutoComplete = false;
   }
 
@@ -31,8 +31,12 @@ export class AutoCompleteComponent {
   }
 
   handleClickSearch() {
-    if (this.onClickSearch) {
-      this.onClickSearch();
+    if (this.search) {
+      this.search(this.value).subscribe(data => {
+        this.results = JSON.parse(data.text());
+      },
+        error => console.log(error)
+      );
     }
   }
 

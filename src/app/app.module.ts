@@ -12,7 +12,6 @@ import { AuthenticatedComponent } from './component/authenticated/authenticated.
 import { InputComponent } from './component/form/input/input.component';
 import { ButtonComponent } from './component/form/button/button.component';
 import { AutoCompleteComponent } from './component/form/auto-complete/auto-complete.component';
-import { YtIframeComponent } from './component/yt-iframe/yt-iframe.component';
 
 @NgModule({
   declarations: [
@@ -21,8 +20,7 @@ import { YtIframeComponent } from './component/yt-iframe/yt-iframe.component';
     AuthenticatedComponent,
     InputComponent,
     ButtonComponent,
-    AutoCompleteComponent,
-    YtIframeComponent
+    AutoCompleteComponent
   ],
   imports: [
     BrowserModule,
