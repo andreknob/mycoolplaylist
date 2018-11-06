@@ -17,7 +17,7 @@ const AUTHORIZATION = {
 // @todo remove hard coded client id and secret, transfer to env variable.
 const CLIENT = {
     ID: '993e260818e14852b08b78fc9e7055eb',
-    SECRET: '',
+    SECRET: 'a63f26997baf4b9ca627615bf7a2336a',
 }
 
 const OPTIONS = {
@@ -189,7 +189,8 @@ class SpotifyLogic {
     }
 
     /**
-     * Returns a randomly generated playlist based on the user's top artists. 
+     * Returns a randomly generated playlist based on the user's top artists.
+     * @param String the access token.
      * @param function a function to be called back with the info.
      */
     static async getPlaylistFromTopArtists(accessToken, callback) {
@@ -207,6 +208,24 @@ class SpotifyLogic {
             playlistArtists.forEach(artist => promises.push(this._promiseCall(this.getTopTracksByArtist.bind(this, accessToken, artist.id))));
 
             callback({status: 200, playlistTracks: this._pushRandomTracks(await Promise.all(promises))}); 
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    /**
+     * Returns a randomly generated playlist based on a single artist. 
+     * @param String the access token.
+     * @param String the artist's id.
+     * @param function a function to be called back with the info.
+     */
+    static async getPlaylistFromArtist(accessToken, artistId, callback) {
+        try {
+            const {data: {artists: relatedArtists}} = await this._promiseCall(this.getRelatedArtists.bind(this, accessToken, artistId));
+            const promises = [];
+            relatedArtists.forEach(artist => promises.push(this._promiseCall(this.getTopTracksByArtist.bind(this, accessToken, artist.id))));
+
+            callback({status: 200, playlistTracks: this._pushRandomTracks(await Promise.all(promises))});
         } catch (err) {
             console.log(err);
         }

@@ -1,1 +1,6 @@
-<input type="text" [(ngModel)]="value" [placeholder]="placeholder">
+<input
+    type="text"
+    [(ngModel)]="value"
+    (input)="handleModelChange($event)"
+    (keydown)="handleKeydown($event)"
+    [placeholder]="placeholder">

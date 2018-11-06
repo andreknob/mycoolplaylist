@@ -1,0 +1,9 @@
+<div class="top-bar" >
+  <app-button *ngIf="!user" icon="fab fa-spotify" title="Authorization" (click)="getAuthorizationPage()"></app-button>
+  <div *ngIf="user" class="avatar">
+    <img
+      src="{{user.image && user.image.url}}"
+      (click)="openProfile()"
+      alt="Avatar" />
+  </div>
+</div>

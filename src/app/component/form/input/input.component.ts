@@ -7,6 +7,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class InputComponent {
 
+  @Input() onChange: Function;
+  @Input() onKeydown: Function;
   @Input() placeholder: String;
   @Output() valueChange: EventEmitter<String> = new EventEmitter<String>();
 
@@ -17,4 +19,15 @@ export class InputComponent {
     this.valueChange.emit(value);
   }
 
+  handleModelChange(e) {
+    if (this.onChange) {
+      this.onChange(e);
+    }
+  }
+
+  handleKeydown(e) {
+    if (this.onKeydown) {
+      this.onKeydown(e);
+    }
+  }
 }

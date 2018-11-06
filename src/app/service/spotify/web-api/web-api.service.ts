@@ -14,6 +14,12 @@ export class WebAPIService {
     );
   }
 
+  getPlaylistFromArtist(artistId) {
+    return this.http.get(`http://localhost:8080/api/spotify/playlistFromArtist/${artistId}`,
+      {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
+    );
+  }
+
   search(searchTerm = '') {
     return this.http.get(`http://localhost:8080/api/spotify/search/${encodeURI(searchTerm)}`,
       {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}

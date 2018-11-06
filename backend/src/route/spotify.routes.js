@@ -10,6 +10,8 @@ router.get('/redirect', SpotifyController.redirect.bind(SpotifyController));
 
 router.get('/playlistFromTopArtists', verifyJWToken, verifyAccessToken, SpotifyController.getPlaylistFromTopArtists.bind(SpotifyController));
 
+router.get('/playlistFromArtist/:artistId', verifyJWToken, verifyAccessToken, SpotifyController.getPlaylistFromArtist.bind(SpotifyController));
+
 router.get('/search/:searchTerm', verifyJWToken, verifyAccessToken, SpotifyController.search.bind(SpotifyController));
 
 module.exports = router;

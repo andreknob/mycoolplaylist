@@ -1,23 +1,15 @@
-<div class="back back-color"></div>
-<div class="back back-image"></div>
-
-<div class="top-bar" >
-  <app-button *ngIf="!user" icon="fab fa-spotify" title="Authorization" (click)="getAuthorizationPage()"></app-button>
-  <div *ngIf="user" class="avatar">
-    <img
-      src="{{user.image && user.image.url}}"
-      (click)="openProfile()"
-      alt="Avatar" />
-  </div>
-</div>
-
-<section>
+<app-section>
   <h2>
     We create a cool playlist for you
   </h2>
 
   <div>
-    <app-auto-complete [(value)]="value" [search]="search" placeholder="just type in an artist"></app-auto-complete>
+    <app-auto-complete
+      [(value)]="value"
+      [onSearch]="handleSearch"
+      [onSelect]="handleSelect"
+      placeholder="just type in an artist">
+    </app-auto-complete>
   </div>
   <div>
     {{value}}
@@ -27,5 +19,5 @@
   </h3>
 
   <app-button [title]="'use your top songs'" (click)="getPlaylistFromTopArtists()"></app-button>
-</section>
+</app-section>
 

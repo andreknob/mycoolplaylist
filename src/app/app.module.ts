@@ -12,6 +12,10 @@ import { AuthenticatedComponent } from './component/authenticated/authenticated.
 import { InputComponent } from './component/form/input/input.component';
 import { ButtonComponent } from './component/form/button/button.component';
 import { AutoCompleteComponent } from './component/form/auto-complete/auto-complete.component';
+import { ResultComponent } from './component/result/result.component';
+import { BackgroundComponent } from './component/background/background.component';
+import { TopBarComponent } from './component/top-bar/top-bar.component';
+import { SectionComponent } from './component/section/section.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +24,11 @@ import { AutoCompleteComponent } from './component/form/auto-complete/auto-compl
     AuthenticatedComponent,
     InputComponent,
     ButtonComponent,
-    AutoCompleteComponent
+    AutoCompleteComponent,
+    ResultComponent,
+    BackgroundComponent,
+    TopBarComponent,
+    SectionComponent
   ],
   imports: [
     BrowserModule,

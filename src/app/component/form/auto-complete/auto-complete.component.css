@@ -26,16 +26,17 @@ i:hover {
 .results-container {
     position: absolute;
     width: 100%;
+    max-height: 250px;
     background-color: #fff;
     color: #000;
     border-radius: 4px;
-
+    overflow-y: scroll;
+    padding-bottom: 1px;
 }
 
 .result {
     border: 1px solid #f3f3f5;
     border-radius: 4px;
-
     padding: 5px;
     padding-left: 10px;
     cursor: pointer;

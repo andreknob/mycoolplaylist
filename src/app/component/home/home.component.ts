@@ -1,47 +1,34 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthorizationService } from '../../service/spotify/authorization/authorization.service';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { WebAPIService } from '../../service/spotify/web-api/web-api.service';
-import { WindowRefService } from '../../service/window/window-ref.service';
-import User from '../../model/user';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  providers: [AuthorizationService, WebAPIService]
+  providers: [WebAPIService]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
 
-  user: User;
-
-  constructor(private authorizationService: AuthorizationService, private webAPIService: WebAPIService,
-    private windowRefService: WindowRefService) {
-      if (localStorage.getItem('user')) {
-        this.user = JSON.parse(localStorage.getItem('user')) || {};
-      }
+  constructor(private router: Router, private webAPIService: WebAPIService) {
   }
 
-  ngOnInit() {
+  handleSearch = (searchTerm) => {
+    return this.webAPIService.search(searchTerm);
   }
 
-  getAuthorizationPage() {
-    this.authorizationService.getAuthorizationPage().subscribe(data => {
-        const {nativeWindow} = this.windowRefService;
-        nativeWindow.location.href = data.text();
-      },
+  handleSelect = (item) => {
+    this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
+      const {playlistTracks} = JSON.parse(data.text());
+      const arr = [];
+      playlistTracks.forEach(track => {
+        arr.push({artist: track.artists[0].name, trackName: track.name});
+      });
+      console.table(arr);
+      this.router.navigate(['/result']);
+    },
       error => console.log(error)
     );
-  }
-
-  openProfile() {
-    const {nativeWindow} = this.windowRefService;
-    const {externalURLs: {spotify: spotifyURL}} = this.user;
-
-    nativeWindow.open(spotifyURL);
-  }
-
-  search = (searchTerm) => {
-    return this.webAPIService.search(searchTerm);
   }
 
   getPlaylistFromTopArtists() {

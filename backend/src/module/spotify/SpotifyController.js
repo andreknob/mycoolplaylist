@@ -36,6 +36,17 @@ class SpotifyController extends AbstractController {
     }
 
     /**
+     * Returns a randomly generated playlist based on a single artist. 
+     */ 
+    static getPlaylistFromArtist(req, res) {
+        const {accessToken, artistId} = req.params;
+        SpotifyLogic.getPlaylistFromArtist(accessToken, artistId, (result) => {
+            const {status, ...rest} = result;
+            res.status(status).json({...rest});
+        });
+    }
+
+    /**
      * Returns the results of a search. 
      */ 
     static search(req, res) {
