@@ -17,7 +17,7 @@ const AUTHORIZATION = {
 // @todo remove hard coded client id and secret, transfer to env variable.
 const CLIENT = {
     ID: '993e260818e14852b08b78fc9e7055eb',
-    SECRET: 'a63f26997baf4b9ca627615bf7a2336a',
+    SECRET: '',
 }
 
 const OPTIONS = {

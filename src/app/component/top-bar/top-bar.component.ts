@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthorizationService } from '../../service/spotify/authorization/authorization.service';
 import { WindowRefService } from '../../service/window/window-ref.service';
-import User from '../../model/user';
+import { UserService } from 'src/app/service/user/user.service';
+import { Subscription } from 'rxjs';
+import User from 'src/app/model/user';
 
 @Component({
   selector: 'app-top-bar',
@@ -9,15 +11,23 @@ import User from '../../model/user';
   styleUrls: ['./top-bar.component.css'],
   providers: [AuthorizationService]
 })
-export class TopBarComponent {
+export class TopBarComponent implements OnInit, OnDestroy {
 
-  user: User;
+  _user: User;
+  subscription: Subscription;
 
-  constructor(private authorizationService: AuthorizationService,
+  constructor(private authorizationService: AuthorizationService, private userService: UserService,
     private windowRefService: WindowRefService) {
-      if (localStorage.getItem('user')) {
-        this.user = JSON.parse(localStorage.getItem('user')) || {};
-      }
+  }
+
+  ngOnInit() {
+    this.subscription = this.userService.getUser().subscribe(user => {
+      this._user = user;
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   getAuthorizationPage() {
@@ -31,7 +41,7 @@ export class TopBarComponent {
 
   openProfile() {
     const {nativeWindow} = this.windowRefService;
-    const {externalURLs: {spotify: spotifyURL}} = this.user;
+    const {externalURLs: {spotify: spotifyURL}} = this._user;
 
     nativeWindow.open(spotifyURL);
   }

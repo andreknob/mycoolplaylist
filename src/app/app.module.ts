@@ -7,6 +7,9 @@ import { Routing } from './app.routing';
 import { AppComponent } from './app.component';
 
 import { WindowRefService } from './service/window/window-ref.service';
+import { UserService } from './service/user/user.service';
+import { ResultService } from './service/result/result.service';
+
 import { HomeComponent } from './component/home/home.component';
 import { AuthenticatedComponent } from './component/authenticated/authenticated.component';
 import { InputComponent } from './component/form/input/input.component';
@@ -36,7 +39,7 @@ import { SectionComponent } from './component/section/section.component';
     FormsModule,
     Routing
   ],
-  providers: [WindowRefService],
+  providers: [WindowRefService, UserService, ResultService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

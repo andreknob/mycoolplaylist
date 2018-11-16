@@ -1,0 +1,46 @@
+h2 {
+    color: #333;
+}
+
+.container {
+    border-radius: 4px;
+    background-color: #fff;
+    opacity: 0.91;
+    padding: 15px;
+    margin: 15px; 
+}
+
+.panel {
+    display: flex;
+}
+
+.tracks {
+    background-color: #fff;
+    display: inline-block;
+    width: 60vw;
+    height: 50vh;
+    overflow: auto;
+}
+
+.options {
+    margin-left: 15px;
+}
+
+@media (max-width: 1024px) {
+    .panel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tracks {
+        background-color: #fff;
+        display: inline-block;
+        width: 100%;
+        height: 50vh;
+        overflow: auto;
+    }
+
+    .options {
+        margin-top: 15px;
+    }
+}

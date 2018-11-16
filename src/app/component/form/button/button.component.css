@@ -3,9 +3,7 @@ button {
     padding: 17px 30px;
     border-radius: 4px;
     margin: 5px;
-    border: 1px solid #fff;
     background-color: transparent;
-    color: #fff;
     -webkit-transition: color ease .5s, border ease .5s, background-color ease .5s;
     transition: color .5s, border .5s, background-color .5s;
     cursor: pointer;
@@ -19,4 +17,14 @@ button:hover {
 
 button:focus {
     outline: none;
+}
+
+.primary {
+    border: 1px solid #fff;
+    color: #fff;
+}
+
+.secondary {
+    border: 1px solid #3a5;
+    color: #3a5;
 }

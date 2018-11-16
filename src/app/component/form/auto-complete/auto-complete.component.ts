@@ -68,6 +68,8 @@ export class AutoCompleteComponent implements AfterViewInit {
   }
 
   handleKeydown(event, item, i) {
+    event.preventDefault();
+
     let element;
     switch (event.keyCode) {
       case 13:

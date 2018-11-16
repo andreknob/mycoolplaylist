@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebAPIService } from '../../service/spotify/web-api/web-api.service';
+import { UserService } from 'src/app/service/user/user.service';
+import { ResultService } from 'src/app/service/result/result.service';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +12,12 @@ import { WebAPIService } from '../../service/spotify/web-api/web-api.service';
 })
 export class HomeComponent {
 
-  constructor(private router: Router, private webAPIService: WebAPIService) {
+  constructor(private router: Router, private webAPIService: WebAPIService,
+    private userService: UserService, private resultService: ResultService) {
+    const lsUser = localStorage.getItem('user');
+    if (lsUser) {
+      this.userService.setUser(JSON.parse(lsUser));
+    }
   }
 
   handleSearch = (searchTerm) => {
@@ -20,11 +27,13 @@ export class HomeComponent {
   handleSelect = (item) => {
     this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
       const {playlistTracks} = JSON.parse(data.text());
-      const arr = [];
+      this.resultService.playlistTracks = playlistTracks;
+      // @todo identificar por que getPlaylistFromArtist 'Greta Link' retorna vazio
+      /* const arr = [];
       playlistTracks.forEach(track => {
         arr.push({artist: track.artists[0].name, trackName: track.name});
       });
-      console.table(arr);
+      console.table(arr);*/
       this.router.navigate(['/result']);
     },
       error => console.log(error)
