@@ -47,6 +47,17 @@ class SpotifyController extends AbstractController {
     }
 
     /**
+     * Gets a previously database persisted playlist and creates it on the spotify account. 
+     */ 
+    static createPlaylist(req, res) {
+        const {accessToken, id} = req.params;
+        SpotifyLogic.createPlaylist(accessToken, id, req.body, (result) => {
+            const {status, ...rest} = result;
+            res.status(status).json({...rest});
+        });
+    }
+
+    /**
      * Returns the results of a search. 
      */ 
     static search(req, res) {

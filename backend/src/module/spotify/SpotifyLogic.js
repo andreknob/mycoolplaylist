@@ -7,17 +7,12 @@ const https = require("https");
 
 const METHODS = {
     GET: 'GET',
+    POST: 'POST'
 }
 
 const AUTHORIZATION = {
-    SCOPES: 'user-read-private user-read-email user-top-read',
+    SCOPES: 'user-read-private user-read-email user-top-read playlist-modify-public playlist-modify-private',
     REDIRECT_URI: 'http://localhost:8080/api/spotify/redirect',
-}
-
-// @todo remove hard coded client id and secret, transfer to env variable.
-const CLIENT = {
-    ID: '993e260818e14852b08b78fc9e7055eb',
-    SECRET: '',
 }
 
 const OPTIONS = {
@@ -25,7 +20,7 @@ const OPTIONS = {
     path: '/api/token',
     method: 'POST',
     headers: {
-        'Authorization': 'Basic ' + new Buffer(`${CLIENT.ID}:${CLIENT.SECRET}`).toString('base64'),
+        'Authorization': 'Basic ' + new Buffer(`${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 };
@@ -41,7 +36,7 @@ class SpotifyLogic {
 
         return 'https://accounts.spotify.com/authorize' +
         '?response_type=code' +
-        '&client_id=' + CLIENT.ID +
+        '&client_id=' + process.env.CLIENT_ID +
         (SCOPES ? '&scope=' + encodeURIComponent(SCOPES) : '') +
         '&redirect_uri=' + encodeURIComponent(REDIRECT_URI) +
         '&state=' + stateValue;
@@ -232,6 +227,59 @@ class SpotifyLogic {
     }
 
     /**
+     * Post a playlist on the user's spotify account. The playlist will be empty until tracks are added.
+     */
+    static async postPlaylist(accessToken, spotifyUserId, callback) {
+        const path = `/v1/users/${spotifyUserId}/playlists`;
+        const options = this._getCommonOptions(accessToken, path, METHODS.POST);
+
+        const body = {
+            name: 'playlist teste',
+            description: 'playlist description'
+        };
+
+        this._commonRequest(options, callback, JSON.stringify(body));
+    }
+
+    /**
+     * Post the tracks to be added to a specific playlist.
+     */
+    static async postTracksToPlaylist(accessToken, playlistId, playlist, callback) {
+        const path = `/v1/playlists/${playlistId}/tracks`;
+        const options = this._getCommonOptions(accessToken, path, METHODS.POST);
+        options.headers['Content-Type'] = 'application/json';
+
+        const body = {
+            uris: playlist
+        };
+
+        this._commonRequest(options, callback, JSON.stringify(body));
+    }
+
+    /**
+     *
+     */
+    static async createPlaylist(accessToken, userId, playlist, callback) {
+        try {
+            const spotifyUserId = await UserLogic.getSpotifyId(userId);
+            const {status, ...result} = await this._promiseCall(this.postPlaylist.bind(this, accessToken, spotifyUserId));
+
+            if (status !== 200) {
+                return callback({status, result}); 
+            }
+
+            const {data: {id: playlistId}} = result;
+
+            const {status: tracksStatus, ...tracksResult} = await this._promiseCall(this.postTracksToPlaylist.bind(this, accessToken, playlistId, playlist));
+            if (tracksStatus !== 201) {
+                return callback({status: tracksStatus, result: tracksResult}); 
+            }
+        } catch (err) {
+            console.log(err);
+        }    
+    }
+
+    /**
      * Search for artists. 
      */ 
     static search(accessToken, searchTerm, callback) {
@@ -252,20 +300,27 @@ class SpotifyLogic {
         };
     }
 
-    static _commonRequest(options, callback) {
+    static _commonRequest(options, callback, body) {
         const req = https.request(options, res => {
+
             let fullData = '';
             res.on('data', data => {
                 fullData += data;
             });
             res.on('end', () => {
-                callback({status: 200, data: JSON.parse(fullData)});
+                const parsed = JSON.parse(fullData);
+                const {error} = parsed;
+                if (error) {
+                    const {status, ...err} = error;
+                    return callback({status: error.status, data: err});
+                }
+                callback({status: 200, data: parsed});
             });
         });
 
         req.on('error', err => callback({status: 500, message: err.message}));
 
-        req.end();
+        req.end(body);
     }
 
     static _promiseCall(callback) {

@@ -6,7 +6,8 @@ import { Http, Headers } from '@angular/http';
 })
 export class WebAPIService {
 
-  constructor(private http: Http) {}
+  constructor(private http: Http) {
+  }
 
   getPlaylistFromTopArtists() {
     return this.http.get(`http://localhost:8080/api/spotify/playlistFromTopArtists`,
@@ -23,6 +24,13 @@ export class WebAPIService {
   search(searchTerm = '') {
     return this.http.get(`http://localhost:8080/api/spotify/search/${encodeURI(searchTerm)}`,
       {headers: new Headers({'x-access-token': localStorage.getItem('jwt')})}
+    );
+  }
+
+  createPlaylist(playlist) {
+    return this.http.post(`http://localhost:8080/api/spotify/createPlaylist`,
+      JSON.stringify(playlist),
+      {headers: new Headers({'Content-Type': 'application/json', 'x-access-token': localStorage.getItem('jwt')})}
     );
   }
 }
