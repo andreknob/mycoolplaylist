@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, Input, Output, ElementRef, EventEmitter, HostListener, ViewChildren } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  Output,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  ViewChildren
+} from '@angular/core';
 
 @Component({
   selector: 'app-auto-complete',

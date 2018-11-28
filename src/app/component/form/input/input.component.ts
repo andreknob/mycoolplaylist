@@ -7,16 +7,24 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class InputComponent {
 
+  private _value: String;
   @Input() onChange: Function;
   @Input() onKeydown: Function;
-  @Input() placeholder: String;
+  @Input() label: String;
+  @Input() placeholder: String = '';
+  @Input() inputLarge: Boolean = false;
   @Output() valueChange: EventEmitter<String> = new EventEmitter<String>();
 
   constructor() { }
 
   @Input()
-  set value(value: string) {
+  set value(value: String) {
+    this._value = value;
     this.valueChange.emit(value);
+  }
+
+  get value(): String {
+    return this._value;
   }
 
   handleModelChange(e) {

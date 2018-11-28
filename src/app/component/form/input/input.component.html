@@ -1,4 +1,6 @@
+<div *ngIf="label" class="label">{{label}}</div>
 <input
+    [ngClass]="{'input-lg': inputLarge}"
     type="text"
     [(ngModel)]="value"
     (input)="handleModelChange($event)"

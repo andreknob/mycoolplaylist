@@ -5,12 +5,24 @@
     </h2>
     <div class="panel">
         <div class="tracks">
-          <div *ngFor="let track of _displayTracks">
+          <div class="track" *ngFor="let track of _displayTracks">
             {{track.artist}}, {{track.name}}
           </div>
         </div>
         <div class="options">
-          <app-button icon="fab fa-spotify" title="Save to Spotify" [secondary]="true" (click)="saveToSpotify()"></app-button>
+          <div>
+            <app-input [(value)]="playlistTitle" label="Playlist's title"></app-input>
+            <app-radio-button [(value)]="playlistState"></app-radio-button>
+          </div>
+
+          <div class="button">
+            <app-button
+              icon="fab fa-spotify"
+              title="Save to Spotify"
+              [secondary]="true"
+              (click)="saveToSpotify()">
+            </app-button>
+          </div>
         </div>
     </div>
   </div>

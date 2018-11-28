@@ -1,5 +1,11 @@
 <div class="auto-complete">
-  <app-input [(value)]="value" [onChange]="handleSearch" [onKeydown]="handleInputKeydown" [placeholder]="placeholder"></app-input>
+  <app-input
+    [(value)]="value"
+    [onChange]="handleSearch"
+    [onKeydown]="handleInputKeydown"
+    [placeholder]="placeholder"
+    [inputLarge]="true">
+  </app-input>
   <span class="icon-div">
       <i class="fas fa-search" (click)="handleSearch()"></i>
   </span>

@@ -19,6 +19,7 @@ import { ResultComponent } from './component/result/result.component';
 import { BackgroundComponent } from './component/background/background.component';
 import { TopBarComponent } from './component/top-bar/top-bar.component';
 import { SectionComponent } from './component/section/section.component';
+import { RadioButtonComponent } from './component/form/radio-button/radio-button.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { SectionComponent } from './component/section/section.component';
     ResultComponent,
     BackgroundComponent,
     TopBarComponent,
-    SectionComponent
+    SectionComponent,
+    RadioButtonComponent
   ],
   imports: [
     BrowserModule,

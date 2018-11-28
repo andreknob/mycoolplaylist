@@ -9,9 +9,12 @@ import { WebAPIService } from 'src/app/service/spotify/web-api/web-api.service';
 })
 export class ResultComponent {
 
+  private _playlistTitle;
   private _playlistTracks;
+  private _playlistState;
   private _displayTracks;
   private _tracksUris;
+
 
   constructor(private resultService: ResultService, private webApiService: WebAPIService) {
     this._playlistTracks = this.resultService.playlistTracks || [];
@@ -22,6 +25,8 @@ export class ResultComponent {
       this._tracksUris.push(track.uri);
       this._displayTracks.push({artist: track.artists[0].name, name: track.name});
     });
+
+    this.playlistTitle = 'My cool playlist';
   }
 
   saveToSpotify() {
@@ -30,5 +35,21 @@ export class ResultComponent {
     },
       error => console.log(error)
     );
+  }
+
+  set playlistTitle(playlistTitle: string) {
+    this._playlistTitle = playlistTitle;
+  }
+
+  get playlistTitle(): string {
+    return this._playlistTitle;
+  }
+
+  set playlistState(playlistState: string) {
+    this._playlistState = playlistState;
+  }
+
+  get playlistState(): string {
+    return this._playlistState;
   }
 }

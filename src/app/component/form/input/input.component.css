@@ -1,12 +1,22 @@
 :host {
     display: flex;
+    flex-direction: column;
     flex: 1;
  }
 
 input {
     flex: 1;
-    font-size: 26px;
-    padding: 14px;
+    font-size: 18px;
+    padding: 8px;
     border: 1px solid #f3f3f5;
     border-radius: 4px;
+}
+
+.input-lg {
+    font-size: 26px;
+    padding: 14px;
+}
+
+.label {
+    font-size: 16px;
 }

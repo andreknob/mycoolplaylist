@@ -42,12 +42,9 @@ export class HomeComponent {
 
   getPlaylistFromTopArtists() {
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
-        const {playlistTracks} = JSON.parse(data.text());
-        const arr = [];
-        playlistTracks.forEach(track => {
-          arr.push({artist: track.artists[0].name, trackName: track.name});
-        });
-        console.table(arr);
+      const {playlistTracks} = JSON.parse(data.text());
+      this.resultService.playlistTracks = playlistTracks;
+      this.router.navigate(['/result']);
       },
       error => console.log(error)
     );
