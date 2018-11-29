@@ -27,9 +27,9 @@ export class WebAPIService {
     );
   }
 
-  createPlaylist(playlist) {
+  createPlaylist(playlistObj) {
     return this.http.post(`http://localhost:8080/api/spotify/createPlaylist`,
-      JSON.stringify(playlist),
+      JSON.stringify(playlistObj),
       {headers: new Headers({'Content-Type': 'application/json', 'x-access-token': localStorage.getItem('jwt')})}
     );
   }

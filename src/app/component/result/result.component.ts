@@ -10,31 +10,41 @@ import { WebAPIService } from 'src/app/service/spotify/web-api/web-api.service';
 export class ResultComponent {
 
   private _playlistTitle;
-  private _playlistTracks;
-  private _playlistState;
-  private _displayTracks;
-  private _tracksUris;
-
+  private _playlistState = 'public';
+  private playlistTracks;
+  private displayTracks;
+  private tracksUris;
+  private created = false;
+  private loading = false;
 
   constructor(private resultService: ResultService, private webApiService: WebAPIService) {
-    this._playlistTracks = this.resultService.playlistTracks || [];
+    this.playlistTracks = this.resultService.playlistTracks || [];
 
-    this._tracksUris = [];
-    this._displayTracks = [];
-    this._playlistTracks.forEach(track => {
-      this._tracksUris.push(track.uri);
-      this._displayTracks.push({artist: track.artists[0].name, name: track.name});
+    this.tracksUris = [];
+    this.displayTracks = [];
+    this.playlistTracks.forEach(track => {
+      this.tracksUris.push(track.uri);
+      this.displayTracks.push({artist: track.artists[0].name, name: track.name});
     });
 
     this.playlistTitle = 'My cool playlist';
   }
 
   saveToSpotify() {
-    this.webApiService.createPlaylist(this._tracksUris).subscribe(data => {
+    this.loading = true;
+    const playlistObj = {
+      title: this.playlistTitle,
+      state: this.playlistState,
+      playlist: this.tracksUris,
+    };
+    this.webApiService.createPlaylist(playlistObj).subscribe(data => {
       console.log(JSON.parse(data.text()));
-    },
-      error => console.log(error)
-    );
+      this.created = true;
+      this.loading = false;
+    }, error => {
+      console.log(error);
+      this.loading = false;
+    });
   }
 
   set playlistTitle(playlistTitle: string) {

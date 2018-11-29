@@ -34,7 +34,7 @@ export class HomeComponent {
         arr.push({artist: track.artists[0].name, trackName: track.name});
       });
       console.table(arr);*/
-      this.router.navigate(['/result']);
+      this.router.navigate(['/playlist']);
     },
       error => console.log(error)
     );
@@ -44,7 +44,7 @@ export class HomeComponent {
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
       const {playlistTracks} = JSON.parse(data.text());
       this.resultService.playlistTracks = playlistTracks;
-      this.router.navigate(['/result']);
+      this.router.navigate(['/playlist']);
       },
       error => console.log(error)
     );

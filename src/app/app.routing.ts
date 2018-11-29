@@ -10,7 +10,7 @@ const appRoutes: Routes = [
     component: AuthenticatedComponent,
   },
   {
-    path: 'result',
+    path: 'playlist',
     component: ResultComponent,
   },
   {

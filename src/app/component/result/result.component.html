@@ -5,7 +5,7 @@
     </h2>
     <div class="panel">
         <div class="tracks">
-          <div class="track" *ngFor="let track of _displayTracks">
+          <div class="track" *ngFor="let track of displayTracks">
             {{track.artist}}, {{track.name}}
           </div>
         </div>
@@ -15,13 +15,21 @@
             <app-radio-button [(value)]="playlistState"></app-radio-button>
           </div>
 
-          <div class="button">
+          <div *ngIf="!created" class="button">
             <app-button
               icon="fab fa-spotify"
               title="Save to Spotify"
               [secondary]="true"
               (click)="saveToSpotify()">
             </app-button>
+          </div>
+
+          <div *ngIf="loading">
+            <i class="fas fa-spinner"></i>
+          </div>
+
+          <div *ngIf="!loading && created">
+            <h2>You can listen to your playlist now -link here-!</h2>
           </div>
         </div>
     </div>
