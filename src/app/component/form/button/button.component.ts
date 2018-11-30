@@ -10,12 +10,13 @@ export class ButtonComponent {
   @Input('title') title: string;
   @Input('icon') icon: string;
   @Input('secondary') secondary: boolean;
+  @Input('disabled') disabled: boolean;
   @Input('onClick') onClick: Function;
 
   constructor() { }
 
   handleClick() {
-    if (this.onClick) {
+    if (this.onClick && !this.disabled) {
       this.onClick();
     }
   }

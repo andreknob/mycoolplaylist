@@ -17,19 +17,16 @@
 
           <div *ngIf="!created" class="button">
             <app-button
-              icon="fab fa-spotify"
+              [icon]="icon"
               title="Save to Spotify"
               [secondary]="true"
-              (click)="saveToSpotify()">
+              [disabled]="loading"
+              [onClick]="saveToSpotify">
             </app-button>
           </div>
 
-          <div *ngIf="loading">
-            <i class="fas fa-spinner"></i>
-          </div>
-
-          <div *ngIf="!loading && created">
-            <h2>You can listen to your playlist now -link here-!</h2>
+          <div *ngIf="created">
+            <h3>You can listen to your playlist now -link here-!</h3>
           </div>
         </div>
     </div>
