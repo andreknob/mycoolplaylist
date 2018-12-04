@@ -17,6 +17,7 @@ export class ResultComponent {
   private loading = false;
   private created = false;
   private icon = 'fab fa-spotify';
+  private resultMsg = '';
 
   constructor(private resultService: ResultService, private webApiService: WebAPIService) {
     this.playlistTracks = this.resultService.playlistTracks || [];
@@ -31,7 +32,7 @@ export class ResultComponent {
     this.playlistTitle = 'My cool playlist';
   }
 
-  saveToSpotify() {
+  saveToSpotify = () => {
     const playlistObj = {
       title: this.playlistTitle,
       state: this.playlistState,
@@ -39,12 +40,13 @@ export class ResultComponent {
     };
     this.loading = true;
     this.icon = 'fas fa-circle-notch fa-spin';
-    /* this.webApiService.createPlaylist(playlistObj).subscribe(data => {
+    this.webApiService.createPlaylist(playlistObj).subscribe(data => {
       console.log(JSON.parse(data.text()));
+      this.resultMsg = 'Saved to your spotify account!';
       this.created = true;
     }, error => {
       console.log(error);
-    });*/
+    });
   }
 
   set playlistTitle(playlistTitle: string) {

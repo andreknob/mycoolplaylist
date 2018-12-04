@@ -1,8 +1,4 @@
-h2, h3, h4 {
-    color: #333;
-}
-
-i {
+h2, h3, h4, i {
     color: #395;
 }
 
@@ -16,12 +12,13 @@ i {
 
 .panel {
     display: flex;
+    width: 90vw;
 }
 
 .tracks {
     background-color: #fff;
     display: inline-block;
-    width: 65vw;
+    flex: 7;
     height: 60vh;
     overflow: auto;
 }
@@ -35,6 +32,7 @@ i {
 
 .options {
     display: flex;
+    flex: 3;
     flex-direction: column;
     justify-content: space-between;
     margin-left: 15px;
@@ -42,6 +40,15 @@ i {
 
 .button {
     align-self: flex-end;
+}
+
+.result-msg h3 {
+    color: #fff;
+    transition: color ease 1s;
+}
+
+.result-msg.result-msg-show h3 {
+    color: #395;
 }
 
 @media (max-width: 1024px) {

@@ -16,5 +16,10 @@
   </h3>
 
   <app-button [title]="'use your top songs'" [onClick]="getPlaylistFromTopArtists"></app-button>
+
+  <div class="loading-msg" [ngClass]="{'loading-msg-show': loading}">
+    <i class="fas fa-circle-notch fa-spin fa-lg" style="margin-right: 5px"></i>
+    <h3>{{loadingMsg}}</h3>
+  </div>
 </app-section>
 

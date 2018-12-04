@@ -15,6 +15,10 @@
             <app-radio-button [(value)]="playlistState"></app-radio-button>
           </div>
 
+          <div class="result-msg" [ngClass]="{'result-msg-show': created}">
+            <h3>{{resultMsg}}</h3>
+          </div>
+
           <div *ngIf="!created" class="button">
             <app-button
               [icon]="icon"
@@ -23,10 +27,6 @@
               [disabled]="loading"
               [onClick]="saveToSpotify">
             </app-button>
-          </div>
-
-          <div *ngIf="created">
-            <h3>You can listen to your playlist now -link here-!</h3>
           </div>
         </div>
     </div>

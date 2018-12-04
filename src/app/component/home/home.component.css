@@ -1,0 +1,13 @@
+.loading-msg h3 {
+    display: inline-block;
+}
+
+.loading-msg {
+    color: #fff;
+    opacity: 0;
+    transition: opacity ease 1s;
+}
+
+.loading-msg.loading-msg-show {
+    opacity: 1;
+}

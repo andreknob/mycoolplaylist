@@ -12,6 +12,9 @@ import { ResultService } from 'src/app/service/result/result.service';
 })
 export class HomeComponent {
 
+  private loading = false;
+  private loadingMsg = '';
+
   constructor(private router: Router, private webAPIService: WebAPIService,
     private userService: UserService, private resultService: ResultService) {
     const lsUser = localStorage.getItem('user');
@@ -25,6 +28,8 @@ export class HomeComponent {
   }
 
   handleSelect = (item) => {
+    this.loadingMsg = 'Loading...';
+    this.loading = true;
     this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
       const {playlistTracks} = JSON.parse(data.text());
       this.resultService.playlistTracks = playlistTracks;
@@ -40,7 +45,9 @@ export class HomeComponent {
     );
   }
 
-  getPlaylistFromTopArtists() {
+  getPlaylistFromTopArtists = () => {
+    this.loadingMsg = 'Loading...';
+    this.loading = true;
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
       const {playlistTracks} = JSON.parse(data.text());
       this.resultService.playlistTracks = playlistTracks;
