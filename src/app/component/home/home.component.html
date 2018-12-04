@@ -1,25 +1,26 @@
 <app-section>
-  <h2>
-    We create a cool playlist for you
-  </h2>
+  <div *ngIf="!showLoading" class="hideableDiv" [ngClass]="{'hide': searching}">
+    <h2>
+      We create a cool playlist for you
+    </h2>
 
-  <div>
-    <app-auto-complete
-      [(value)]="value"
-      [onSearch]="handleSearch"
-      [onSelect]="handleSelect"
-      placeholder="just type in an artist">
-    </app-auto-complete>
+    <div>
+      <app-auto-complete
+        [(value)]="value"
+        [onSearch]="handleSearch"
+        [onSelect]="handleSelect"
+        placeholder="just type in an artist">
+      </app-auto-complete>
+    </div>
+    <h3>
+        or
+    </h3>
+
+    <app-button [title]="'use your top songs'" [onClick]="getPlaylistFromTopArtists"></app-button>
   </div>
-  <h3>
-      or
-  </h3>
 
-  <app-button [title]="'use your top songs'" [onClick]="getPlaylistFromTopArtists"></app-button>
-
-  <div class="loading-msg" [ngClass]="{'loading-msg-show': loading}">
+  <div class="loading-msg" [ngClass]="{'loading-msg-show': showLoading}">
     <i class="fas fa-circle-notch fa-spin fa-lg" style="margin-right: 5px"></i>
     <h3>{{loadingMsg}}</h3>
   </div>
 </app-section>
-

@@ -12,7 +12,8 @@ import { ResultService } from 'src/app/service/result/result.service';
 })
 export class HomeComponent {
 
-  private loading = false;
+  private searching = false;
+  private showLoading = false;
   private loadingMsg = '';
 
   constructor(private router: Router, private webAPIService: WebAPIService,
@@ -28,8 +29,10 @@ export class HomeComponent {
   }
 
   handleSelect = (item) => {
-    this.loadingMsg = 'Loading...';
-    this.loading = true;
+    if (this.searching) {
+      return;
+    }
+    this.setShowLoading();
     this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
       const {playlistTracks} = JSON.parse(data.text());
       this.resultService.playlistTracks = playlistTracks;
@@ -46,8 +49,10 @@ export class HomeComponent {
   }
 
   getPlaylistFromTopArtists = () => {
-    this.loadingMsg = 'Loading...';
-    this.loading = true;
+    if (this.searching) {
+      return;
+    }
+    this.setShowLoading();
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
       const {playlistTracks} = JSON.parse(data.text());
       this.resultService.playlistTracks = playlistTracks;
@@ -55,5 +60,13 @@ export class HomeComponent {
       },
       error => console.log(error)
     );
+  }
+
+  setShowLoading = () => {
+    this.searching = true;
+    setTimeout(() => {
+      this.loadingMsg = 'Loading...';
+      this.showLoading = true;
+    }, 1250);
   }
 }
