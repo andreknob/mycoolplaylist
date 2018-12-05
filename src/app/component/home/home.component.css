@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
     opacity: 1;
     transition: opacity ease 1s;
 }
@@ -16,9 +15,11 @@
 }
 
 .loading-msg {
+    align-self: center;
     color: #fff;
     opacity: 0;
     transition: opacity ease 1s;
+    margin-top: 50px;
 }
 
 .loading-msg.loading-msg-show {

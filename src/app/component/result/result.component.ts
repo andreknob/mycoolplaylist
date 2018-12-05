@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { ResultService } from 'src/app/service/result/result.service';
 import { WebAPIService } from 'src/app/service/spotify/web-api/web-api.service';
 
@@ -19,8 +20,13 @@ export class ResultComponent {
   private icon = 'fab fa-spotify';
   private resultMsg = '';
 
-  constructor(private resultService: ResultService, private webApiService: WebAPIService) {
-    this.playlistTracks = this.resultService.playlistTracks || [];
+  constructor(private router: Router, private resultService: ResultService, private webApiService: WebAPIService) {
+    this.playlistTracks = this.resultService.playlistTracks;
+
+    if (!this.playlistTracks) {
+      this.router.navigate(['']);
+      return;
+    }
 
     this.tracksUris = [];
     this.displayTracks = [];
