@@ -64,8 +64,24 @@ class SpotifyController extends AbstractController {
         const {accessToken} = req.params;
         SpotifyLogic.search(accessToken, req.params.searchTerm, (result) => {
             const {status, ...rest} = result;
+            
+            // @todo const items = rest.data.artists.items.map(({id, name}) => ({id, name}));
             const items = {...rest}.data.artists.items.map(({id, name}) => ({id, name}));
             res.status(status).json(items);
+        });
+    }
+
+    /** @todo implement this call
+     * Gets the spotify user's info.
+     * @param string the spotify's generated access token for some user.
+     * @param function a function to be called back with the user's info.
+     */
+    static getSpotifyUserInfo(req, res) {
+        const {accessToken} = req.params;
+        SpotifyLogic.getSpotifyUserInfo(accessToken, (result) => {
+            const {status, ...rest} = result;
+            
+            // res.status(status).json(items);
         });
     }
     

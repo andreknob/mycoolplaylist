@@ -3,7 +3,7 @@ const StringHelper = require('../../core/helper/StringHelper');
 const STATE_LIST = [];
 
 class SpotifyStore {
-
+    // @todo persist this on the db
     /**
      * Gets a random string and adds it to the state list.
      */ 

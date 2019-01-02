@@ -15,6 +15,8 @@ export class HomeComponent {
   private searching = false;
   private showLoading = false;
   private loadingMsg = '';
+  private timeout;
+  private topMsg = 'We create a cool playlist for you';
 
   constructor(private router: Router, private webAPIService: WebAPIService,
     private userService: UserService, private resultService: ResultService) {
@@ -36,15 +38,15 @@ export class HomeComponent {
     this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
       const {playlistTracks} = JSON.parse(data.text());
       this.resultService.playlistTracks = playlistTracks;
-      // @todo identificar por que getPlaylistFromArtist 'Greta Link' retorna vazio
-      /* const arr = [];
-      playlistTracks.forEach(track => {
-        arr.push({artist: track.artists[0].name, trackName: track.name});
-      });
-      console.table(arr);*/
+
       this.router.navigate(['/playlist']);
     },
-      error => console.log(error)
+      error => {
+        this.setHideLoading();
+        if (error.status === 404) {
+          this.topMsg = JSON.parse(error.text()).message;
+        }
+      }
     );
   }
 
@@ -64,9 +66,17 @@ export class HomeComponent {
 
   setShowLoading = () => {
     this.searching = true;
-    setTimeout(() => {
+
+    this.timeout = setTimeout(() => {
       this.loadingMsg = 'Loading...';
       this.showLoading = true;
     }, 1250);
+  }
+
+  setHideLoading = () => {
+    clearTimeout(this.timeout);
+    this.showLoading = false;
+    this.searching = false;
+    this.loadingMsg = '';
   }
 }

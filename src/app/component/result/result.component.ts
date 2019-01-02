@@ -47,7 +47,6 @@ export class ResultComponent {
     this.loading = true;
     this.icon = 'fas fa-circle-notch fa-spin';
     this.webApiService.createPlaylist(playlistObj).subscribe(data => {
-      console.log(JSON.parse(data.text()));
       this.resultMsg = 'Saved to your spotify account!';
       this.created = true;
     }, error => {

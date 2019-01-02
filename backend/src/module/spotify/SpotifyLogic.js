@@ -24,7 +24,7 @@ const OPTIONS = {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 };
-
+// @todo encapsular métodos genéricos em outra classe
 class SpotifyLogic {
 
     /**
@@ -218,6 +218,9 @@ class SpotifyLogic {
         try {
             const {data: {artists: relatedArtists}} = await this._promiseCall(this.getRelatedArtists.bind(this, accessToken, artistId));
             const promises = [];
+            if (!relatedArtists || relatedArtists.length === 0) {
+                return callback({status: 404, message: 'That\'s so underground... please try another artist.'});
+            }
             relatedArtists.forEach(artist => promises.push(this._promiseCall(this.getTopTracksByArtist.bind(this, accessToken, artist.id))));
 
             callback({status: 200, playlistTracks: this._pushRandomTracks(await Promise.all(promises))});
