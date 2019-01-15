@@ -1,6 +1,6 @@
 const UserLogic = require('../user/UserLogic');
 const AccessTokenLogic = require('./access-token/AccessTokenLogic');
-const SpotifyStore = require('../spotify/SpotifyStore');
+const StateLogic = require('./state/StateLogic');
 const JsonHelper = require('../../core/helper/JsonHelper');
 const querystring = require('querystring');
 const https = require("https");
@@ -30,9 +30,9 @@ class SpotifyLogic {
     /**
      * @returns spotify's interface for the user to authenticate.
      */ 
-    static getAuthorizationURI() {
+    static async getAuthorizationURI() {
         const {SCOPES, REDIRECT_URI} = AUTHORIZATION;
-        const stateValue = SpotifyStore.getStateValue();
+        const stateValue = await StateLogic.getStateValue();
 
         return 'https://accounts.spotify.com/authorize' +
         '?response_type=code' +
@@ -48,8 +48,8 @@ class SpotifyLogic {
      * @param function the method to emit the response.
      */
     static handleRedirect({code, state}, responseEmitter) {
-        if (!SpotifyStore.removeStateValue(state)) {
-            return responseEmitter({status: 500, message: 'No corresponding state found on SpotifyStore.'});
+        if (!StateLogic.removeStateValue(state)) {
+            return responseEmitter({status: 500, message: 'No corresponding state found on State table.'});
         }
 
         this.requestAccessToken(code, responseEmitter);
@@ -366,7 +366,7 @@ class SpotifyLogic {
      * @param function the method to emit the response. 
      */
     static handleAccessDenied({error, state}, responseEmitter) {
-        SpotifyStore.removeStateValue(state);
+        StateLogic.removeStateValue(state);
         responseEmitter({status: 401, message: error});
     } 
 }

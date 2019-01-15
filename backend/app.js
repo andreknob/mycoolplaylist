@@ -7,8 +7,7 @@ const path = require('path');
 const app = express();
 
 mongoose.set('debug', true);
-// @todo search how to put the password on the environment
-mongoose.connect('mongodb://mycoolplaylistuser:mycoolplaylistpassword123@ds149252.mlab.com:49252/mycoolplaylistdb', {useNewUrlParser: true});
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ds149252.mlab.com:49252/mycoolplaylistdb`, {useNewUrlParser: true});
 
 mongoose.connection.on('connected', () => {
     console.log('MongoDB connected at port 27017');

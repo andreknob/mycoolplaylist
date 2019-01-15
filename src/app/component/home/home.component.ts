@@ -36,11 +36,11 @@ export class HomeComponent {
     }
     this.setShowLoading();
     this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
-      const {playlistTracks} = JSON.parse(data.text());
-      this.resultService.playlistTracks = playlistTracks;
+        const {playlistTracks} = JSON.parse(data.text());
+        this.resultService.playlistTracks = playlistTracks;
 
-      this.router.navigate(['/playlist']);
-    },
+        this.router.navigate(['/playlist']);
+      },
       error => {
         this.setHideLoading();
         if (error.status === 404) {
@@ -56,9 +56,17 @@ export class HomeComponent {
     }
     this.setShowLoading();
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
-      const {playlistTracks} = JSON.parse(data.text());
-      this.resultService.playlistTracks = playlistTracks;
-      this.router.navigate(['/playlist']);
+        const {playlistTracks} = JSON.parse(data.text());
+        this.resultService.playlistTracks = playlistTracks;
+        this.router.navigate(['/playlist']);
+      },
+      error => console.log(error)
+    );
+  }
+
+  getSpotifyUserInfo = () => {
+    this.webAPIService.getSpotifyUserInfo().subscribe(data => {
+        console.log(JSON.parse(data.text()));
       },
       error => console.log(error)
     );

@@ -6,7 +6,7 @@
     <div class="panel">
         <div class="tracks">
           <div class="track" *ngFor="let track of displayTracks">
-            {{track.artist}}, {{track.name}}
+            <span class="artist">{{track.artist}}</span>, {{track.name}}
           </div>
         </div>
         <div class="options">

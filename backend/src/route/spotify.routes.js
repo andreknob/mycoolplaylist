@@ -8,6 +8,8 @@ router.get('/authorize', SpotifyController.authorize.bind(SpotifyController));
 
 router.get('/redirect', SpotifyController.redirect.bind(SpotifyController));
 
+router.get('/me', verifyJWToken, verifyAccessToken, SpotifyController.getSpotifyUserInfo.bind(SpotifyController));
+
 router.get('/playlistFromTopArtists', verifyJWToken, verifyAccessToken, SpotifyController.getPlaylistFromTopArtists.bind(SpotifyController));
 
 router.get('/playlistFromArtist/:artistId', verifyJWToken, verifyAccessToken, SpotifyController.getPlaylistFromArtist.bind(SpotifyController));

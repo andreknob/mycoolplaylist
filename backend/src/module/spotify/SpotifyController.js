@@ -10,8 +10,8 @@ class SpotifyController extends AbstractController {
     /**
      * Returns spotify's interface for the user to authenticate.
      */ 
-    static authorize(req, res) {
-        res.send(SpotifyLogic.getAuthorizationURI());
+    static async authorize(req, res) {
+        res.send(await SpotifyLogic.getAuthorizationURI());
     }
 
     /**
@@ -64,14 +64,13 @@ class SpotifyController extends AbstractController {
         const {accessToken} = req.params;
         SpotifyLogic.search(accessToken, req.params.searchTerm, (result) => {
             const {status, ...rest} = result;
-            
-            // @todo const items = rest.data.artists.items.map(({id, name}) => ({id, name}));
-            const items = {...rest}.data.artists.items.map(({id, name}) => ({id, name}));
+            const items = rest.data.artists.items.map(({id, name}) => ({id, name}));
+
             res.status(status).json(items);
         });
     }
 
-    /** @todo implement this call
+    /**
      * Gets the spotify user's info.
      * @param string the spotify's generated access token for some user.
      * @param function a function to be called back with the user's info.
@@ -81,7 +80,7 @@ class SpotifyController extends AbstractController {
         SpotifyLogic.getSpotifyUserInfo(accessToken, (result) => {
             const {status, ...rest} = result;
             
-            // res.status(status).json(items);
+            res.status(status).json(rest);
         });
     }
     

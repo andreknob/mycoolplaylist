@@ -30,6 +30,10 @@ h2, h3, h4, i {
     font-weight: 100;
 }
 
+.artist {
+    font-weight: bold;
+}
+
 .options {
     display: flex;
     flex: 3;
