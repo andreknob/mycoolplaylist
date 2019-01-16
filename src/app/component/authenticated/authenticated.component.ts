@@ -19,6 +19,8 @@ export class AuthenticatedComponent {
           const user = data.text();
           // this.userService.setUser(JSON.parse(user));
           localStorage.setItem('user', user);
+          this.userService.setAuthenticated(true);
+
           this.router.navigate(['']);
         },
         err => console.log(err)

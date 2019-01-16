@@ -9,6 +9,7 @@ import User from 'src/app/model/user';
 export class UserService {
 
   private _user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+  private _authenticated: Boolean = false;
 
   constructor(private http: Http) { }
 
@@ -24,5 +25,13 @@ export class UserService {
 
   getUser(): Observable<User> {
     return this._user.asObservable();
+  }
+
+  setAuthenticated(authenticated) {
+    this._authenticated = authenticated;
+  }
+
+  getAuthenticated(): Boolean {
+    return this._authenticated;
   }
 }

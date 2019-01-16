@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthorizationService } from '../../service/spotify/authorization/authorization.service';
 import { WebAPIService } from '../../service/spotify/web-api/web-api.service';
 import { UserService } from 'src/app/service/user/user.service';
 import { ResultService } from 'src/app/service/result/result.service';
+import { WindowRefService } from '../../service/window/window-ref.service';
 
 @Component({
   selector: 'app-home',
@@ -18,12 +20,14 @@ export class HomeComponent {
   private timeout;
   private topMsg = 'We create a cool playlist for you';
 
-  constructor(private router: Router, private webAPIService: WebAPIService,
-    private userService: UserService, private resultService: ResultService) {
-    const lsUser = localStorage.getItem('user');
-    if (lsUser) {
-      this.userService.setUser(JSON.parse(lsUser));
-    }
+  constructor(private authorizationService: AuthorizationService, private router: Router,
+    private webAPIService: WebAPIService, private userService: UserService,
+    private resultService: ResultService, private windowRefService: WindowRefService) {
+      if (this.userService.getAuthenticated()) {
+        this.setUserOnService();
+      } else {
+        this.getSpotifyUserInfo();
+      }
   }
 
   handleSearch = (searchTerm) => {
@@ -66,10 +70,32 @@ export class HomeComponent {
 
   getSpotifyUserInfo = () => {
     this.webAPIService.getSpotifyUserInfo().subscribe(data => {
-        console.log(JSON.parse(data.text()));
+        this.setUserOnService();
+      },
+      error => {
+        console.log(error);
+        if (error.status === 403) {
+          localStorage.removeItem('user');
+          this.getAuthorizationPage();
+        }
+      }
+    );
+  }
+
+  getAuthorizationPage = () => {
+    this.authorizationService.getAuthorizationPage().subscribe(data => {
+        const {nativeWindow} = this.windowRefService;
+        nativeWindow.location.href = data.text();
       },
       error => console.log(error)
     );
+  }
+
+  setUserOnService = () => {
+    const lsUser = localStorage.getItem('user');
+    if (lsUser) {
+      this.userService.setUser(JSON.parse(lsUser));
+    }
   }
 
   setShowLoading = () => {
