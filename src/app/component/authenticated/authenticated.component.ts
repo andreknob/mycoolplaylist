@@ -8,8 +8,9 @@ import { UserService } from '../../service/user/user.service';
 })
 export class AuthenticatedComponent {
 
+  // @todo chamar autenticação quando o usuário não estiver autenticado e clicar no 'use your top songs'
+  // ou digitar algo no input
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) {
-    // @todo discover why sometimes the page is redirected to the authenticated link two times
     this.route.params.subscribe(params => localStorage.setItem('jwt', params['jwt']));
 
     const lsUser = localStorage.getItem('user');
@@ -17,7 +18,7 @@ export class AuthenticatedComponent {
       this.userService.getUserInfo().subscribe(
         data => {
           const user = data.text();
-          // this.userService.setUser(JSON.parse(user));
+
           localStorage.setItem('user', user);
           this.userService.setAuthenticated(true);
 
@@ -28,8 +29,6 @@ export class AuthenticatedComponent {
       return;
     }
 
-    // @todo call something on the load and when there's a lsUser to set this line below
-    // this.userService.setUser(JSON.parse(lsUser));
     this.router.navigate(['']);
   }
 

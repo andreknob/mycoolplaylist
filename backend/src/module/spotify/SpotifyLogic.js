@@ -86,9 +86,10 @@ class SpotifyLogic {
 
     /**
      * Creates/updates an accessToken and creates a new user if it doesn't exist yet.
-     * @param function the method to emit the response (in success, emits a new jsonWebToken).
-     * @param long the date (in ms) right before the request.
-     * @param object the response data containing the accessToken.
+     * @param responseEmitter the method to emit the response (in success, emits a new jsonWebToken).
+     * @param now the date (in ms) right before the request.
+     * @param userId the id of the user.
+     * @param data the response data containing the accessToken.
      */ 
     static _handleAccessTokenResponse(responseEmitter, now, userId, data) {
         const accessTokenObj = JsonHelper.parse(data);
@@ -126,8 +127,8 @@ class SpotifyLogic {
 
     /**
      * Gets the spotify user's info.
-     * @param string the spotify's generated access token for some user.
-     * @param function a function to be called back with the user's info.
+     * @param accessToken the spotify's generated access token for some user.
+     * @param callback a function to be called back with the user's info.
      */
     static getSpotifyUserInfo(accessToken, callback) {
         const options = {
@@ -152,8 +153,9 @@ class SpotifyLogic {
 
     /**
      * Gets the top artists/tracks for an user.
+     * @param accessToken the access token
      * @param type the returning object type (artist/track)
-     * @param function a function to be called back with the user's info.
+     * @param callback a function to be called back with the user's info.
      */
     static getTop(accessToken, type, callback) {
         const path = `/v1/me/top/${type}?limit=15`;
@@ -164,7 +166,7 @@ class SpotifyLogic {
 
     /**
      * Gets an artist's related artists.
-     * @param function a function to be called back with the info.
+     * @param callback a function to be called back with the info.
      */
     static getRelatedArtists(accessToken, artistId, callback) {
         const path = `/v1/artists/${artistId}/related-artists`;
@@ -185,8 +187,8 @@ class SpotifyLogic {
 
     /**
      * Returns a randomly generated playlist based on the user's top artists.
-     * @param String the access token.
-     * @param function a function to be called back with the info.
+     * @param accessToken the access token.
+     * @param callback a function to be called back with the info.
      */
     static async getPlaylistFromTopArtists(accessToken, callback) {
         try {
@@ -210,9 +212,9 @@ class SpotifyLogic {
 
     /**
      * Returns a randomly generated playlist based on a single artist. 
-     * @param String the access token.
-     * @param String the artist's id.
-     * @param function a function to be called back with the info.
+     * @param accessToken the access token.
+     * @param artistId the artist's id.
+     * @param callback a function to be called back with the info.
      */
     static async getPlaylistFromArtist(accessToken, artistId, callback) {
         try {

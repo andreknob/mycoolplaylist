@@ -7,6 +7,8 @@ module.exports = async (req, res, next) => {
         if (!data.refreshToken) {
             return res.status(403).json({message: 'No refresh token is present, the accessToken was probably already refreshed.'});
         }
+        // @todo deu algum problema aqui ao abrir a aplicação no dia seguinte
+        console.log('refresh access token');
         return SpotifyLogic.requestAccessToken(data.refreshToken, accessTokenResponse.bind(this, req, res, next), req.params.id, true);
     }
     callNext(req, next, data.accessToken);

@@ -1,5 +1,10 @@
 <div class="top-bar" >
-  <app-button *ngIf="!_user" icon="fab fa-spotify" title="Authorization" (click)="getAuthorizationPage()"></app-button>
+  <app-button
+    *ngIf="!_user"
+    [icon]="authButtonIcon"
+    title="Authorization"
+    (click)="getAuthorizationPage()">
+  </app-button>
   <div *ngIf="_user" class="avatar">
     <img
       src="{{_user.image && _user.image.url}}"

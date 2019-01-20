@@ -26,7 +26,7 @@ class UserLogic extends AbstractLogic {
 
     static generateJWT(id) {
         return jwt.sign({id}, process.env.JWT_SECRET, {
-            expiresIn: 172800
+            expiresIn: 86400
         });
     }
 

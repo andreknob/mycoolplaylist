@@ -15,9 +15,11 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
   _user: User;
   subscription: Subscription;
+  authButtonIcon: String;
 
   constructor(private authorizationService: AuthorizationService, private userService: UserService,
     private windowRefService: WindowRefService) {
+      this.authButtonIcon = localStorage.getItem('jwt') !== null ? 'fas fa-circle-notch fa-spin' : 'fab fa-spotify';
   }
 
   ngOnInit() {

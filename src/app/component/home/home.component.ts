@@ -26,7 +26,9 @@ export class HomeComponent {
       if (this.userService.getAuthenticated()) {
         this.setUserOnService();
       } else {
-        this.getSpotifyUserInfo();
+        if (localStorage.getItem('jwt') !== null) {
+          this.getSpotifyUserInfo();
+        }
       }
   }
 
@@ -76,6 +78,7 @@ export class HomeComponent {
         console.log(error);
         if (error.status === 403) {
           localStorage.removeItem('user');
+          localStorage.removeItem('jwt');
           this.getAuthorizationPage();
         }
       }
