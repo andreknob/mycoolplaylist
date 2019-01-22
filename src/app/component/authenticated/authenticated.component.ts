@@ -7,9 +7,6 @@ import { UserService } from '../../service/user/user.service';
   template: '',
 })
 export class AuthenticatedComponent {
-
-  // @todo chamar autenticação quando o usuário não estiver autenticado e clicar no 'use your top songs'
-  // ou digitar algo no input
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) {
     this.route.params.subscribe(params => localStorage.setItem('jwt', params['jwt']));
 

@@ -25,14 +25,21 @@ export class HomeComponent {
     private resultService: ResultService, private windowRefService: WindowRefService) {
       if (this.userService.getAuthenticated()) {
         this.setUserOnService();
-      } else {
-        if (localStorage.getItem('jwt') !== null) {
-          this.getSpotifyUserInfo();
-        }
+      } else if (localStorage.getItem('jwt') !== null) {
+        this.getSpotifyUserInfo();
+      }
+
+      if (localStorage.getItem('useTopSongs')) {
+        this.getPlaylistFromTopArtists();
+        localStorage.removeItem('useTopSongs');
       }
   }
 
   handleSearch = (searchTerm) => {
+    if (localStorage.getItem('jwt') === null) {
+      localStorage.setItem('searchTerm', searchTerm);
+      return this.getAuthorizationPage();
+    }
     return this.webAPIService.search(searchTerm);
   }
 
@@ -60,6 +67,11 @@ export class HomeComponent {
     if (this.searching) {
       return;
     }
+    if (localStorage.getItem('jwt') === null) {
+      localStorage.setItem('useTopSongs', 'true');
+      return this.getAuthorizationPage();
+    }
+
     this.setShowLoading();
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
         const {playlistTracks} = JSON.parse(data.text());
