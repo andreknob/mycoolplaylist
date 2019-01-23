@@ -5,6 +5,7 @@ import { WebAPIService } from '../../service/spotify/web-api/web-api.service';
 import { UserService } from 'src/app/service/user/user.service';
 import { ResultService } from 'src/app/service/result/result.service';
 import { WindowRefService } from '../../service/window/window-ref.service';
+import { DEFERRED, ENDPOINTS, MESSAGES } from './home.constants';
 
 @Component({
   selector: 'app-home',
@@ -13,12 +14,11 @@ import { WindowRefService } from '../../service/window/window-ref.service';
   providers: [WebAPIService]
 })
 export class HomeComponent {
-
   private searching = false;
   private showLoading = false;
-  private loadingMsg = '';
+  private loadingMsg = MESSAGES.EMPTY;
   private timeout;
-  private topMsg = 'We create a cool playlist for you';
+  private topMsg = MESSAGES.TOP;
 
   constructor(private authorizationService: AuthorizationService, private router: Router,
     private webAPIService: WebAPIService, private userService: UserService,
@@ -29,15 +29,15 @@ export class HomeComponent {
         this.getSpotifyUserInfo();
       }
 
-      if (localStorage.getItem('useTopSongs')) {
+      if (localStorage.getItem(DEFERRED.USE_TOP_SONGS)) {
         this.getPlaylistFromTopArtists();
-        localStorage.removeItem('useTopSongs');
+        localStorage.removeItem(DEFERRED.USE_TOP_SONGS);
       }
   }
 
   handleSearch = (searchTerm) => {
     if (localStorage.getItem('jwt') === null) {
-      localStorage.setItem('searchTerm', searchTerm);
+      localStorage.setItem(DEFERRED.SEARCH_TERM, searchTerm);
       return this.getAuthorizationPage();
     }
     return this.webAPIService.search(searchTerm);
@@ -52,7 +52,7 @@ export class HomeComponent {
         const {playlistTracks} = JSON.parse(data.text());
         this.resultService.playlistTracks = playlistTracks;
 
-        this.router.navigate(['/playlist']);
+        this.router.navigate([ENDPOINTS.PLAYLIST]);
       },
       error => {
         this.setHideLoading();
@@ -68,7 +68,7 @@ export class HomeComponent {
       return;
     }
     if (localStorage.getItem('jwt') === null) {
-      localStorage.setItem('useTopSongs', 'true');
+      localStorage.setItem(DEFERRED.USE_TOP_SONGS, 'true');
       return this.getAuthorizationPage();
     }
 
@@ -76,7 +76,7 @@ export class HomeComponent {
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
         const {playlistTracks} = JSON.parse(data.text());
         this.resultService.playlistTracks = playlistTracks;
-        this.router.navigate(['/playlist']);
+        this.router.navigate([ENDPOINTS.PLAYLIST]);
       },
       error => console.log(error)
     );
@@ -117,7 +117,7 @@ export class HomeComponent {
     this.searching = true;
 
     this.timeout = setTimeout(() => {
-      this.loadingMsg = 'Loading...';
+      this.loadingMsg = MESSAGES.LOADING;
       this.showLoading = true;
     }, 1250);
   }
@@ -126,6 +126,6 @@ export class HomeComponent {
     clearTimeout(this.timeout);
     this.showLoading = false;
     this.searching = false;
-    this.loadingMsg = '';
+    this.loadingMsg = MESSAGES.EMPTY;
   }
 }

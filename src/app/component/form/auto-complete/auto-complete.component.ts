@@ -1,5 +1,5 @@
 import {
-  OnInit,
+  AfterContentInit,
   AfterViewInit,
   Component,
   Input,
@@ -15,7 +15,7 @@ import {
   templateUrl: './auto-complete.component.html',
   styleUrls: ['./auto-complete.component.css']
 })
-export class AutoCompleteComponent implements OnInit, AfterViewInit {
+export class AutoCompleteComponent implements AfterContentInit, AfterViewInit {
 
   private _value;
   private _results;
@@ -36,7 +36,7 @@ export class AutoCompleteComponent implements OnInit, AfterViewInit {
     this._displayAutoComplete = false;
   }
 
-  ngOnInit() {
+  ngAfterContentInit() {
     const searchTerm = localStorage.getItem('searchTerm');
     if (searchTerm) {
       this.value = searchTerm;

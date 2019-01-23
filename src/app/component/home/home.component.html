@@ -9,14 +9,14 @@
         [(value)]="value"
         [onSearch]="handleSearch"
         [onSelect]="handleSelect"
-        placeholder="just type in an artist">
+        [placeholder]="MESSAGES.TYPE_ARTIST">
       </app-auto-complete>
     </div>
     <h3>
         or
     </h3>
 
-    <app-button [title]="'use your top songs'" [onClick]="getPlaylistFromTopArtists"></app-button>
+    <app-button [title]="MESSAGES.USE_TOP_SONGS" [onClick]="getPlaylistFromTopArtists"></app-button>
   </div>
 
   <div class="loading-msg" [ngClass]="{'loading-msg-show': showLoading}">
