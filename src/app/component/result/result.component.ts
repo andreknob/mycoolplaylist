@@ -13,13 +13,13 @@ export class ResultComponent {
   private _playlistTitle;
   private _playlistState = 'public';
   private playlistTracks;
-  private displayTracks;
+  private _displayTracks;
   private tracksUris;
   private loading = false;
-  private created = false;
+  private _created = false;
   private icon = 'fab fa-spotify';
-  private resultMsg = '';
-  private showContainer: Boolean = false;
+  private _resultMsg = '';
+  private _showContainer: Boolean = false;
 
   constructor(private router: Router, private resultService: ResultService, private webApiService: WebAPIService) {
     this.playlistTracks = this.resultService.playlistTracks;
@@ -30,10 +30,10 @@ export class ResultComponent {
     }
 
     this.tracksUris = [];
-    this.displayTracks = [];
+    this._displayTracks = [];
     this.playlistTracks.forEach(track => {
       this.tracksUris.push(track.uri);
-      this.displayTracks.push({artist: track.artists[0].name, name: track.name});
+      this._displayTracks.push({artist: track.artists[0].name, name: track.name});
     });
 
     this.playlistTitle = 'My cool playlist';
@@ -73,5 +73,33 @@ export class ResultComponent {
 
   get playlistState(): string {
     return this._playlistState;
+  }
+
+  set showContainer(value) {
+    this._showContainer = value;
+  }
+
+  get showContainer() {
+    return this._showContainer;
+  }
+
+  get displayTracks() {
+    return this._displayTracks;
+  }
+
+  set created(value) {
+    this._created = value;
+  }
+
+  get created() {
+    return this._created;
+  }
+
+  set resultMsg(value) {
+    this._resultMsg = value;
+  }
+
+  get resultMsg() {
+    return this._resultMsg;
   }
 }

@@ -15,9 +15,9 @@ import { DEFERRED, ENDPOINTS, MESSAGES } from './home.constants';
 })
 export class HomeComponent {
   private searching = false;
-  private showLoading = false;
+  private _showLoading = false;
   private messagesConst = MESSAGES;
-  private loadingMsg = MESSAGES.EMPTY;
+  private _loadingMsg = MESSAGES.EMPTY;
   private timeout;
   private topMsg = MESSAGES.TOP;
 
@@ -48,7 +48,7 @@ export class HomeComponent {
     if (this.searching) {
       return;
     }
-    this.setShowLoading();
+    this.showLoading = true;
     this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
         const {playlistTracks} = JSON.parse(data.text());
         this.resultService.playlistTracks = playlistTracks;
@@ -73,7 +73,7 @@ export class HomeComponent {
       return this.getAuthorizationPage();
     }
 
-    this.setShowLoading();
+    this.showLoading = true;
     this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
         const {playlistTracks} = JSON.parse(data.text());
         this.resultService.playlistTracks = playlistTracks;
@@ -114,18 +114,30 @@ export class HomeComponent {
     }
   }
 
-  setShowLoading = () => {
+  set showLoading(value) {
     this.searching = true;
 
     this.timeout = setTimeout(() => {
       this.loadingMsg = MESSAGES.LOADING;
-      this.showLoading = true;
+      this._showLoading = value;
     }, 1250);
+  }
+
+  get showLoading() {
+    return this._showLoading;
+  }
+
+  set loadingMsg(value) {
+    this._loadingMsg = value;
+  }
+
+  get loadingMsg() {
+    return this._loadingMsg;
   }
 
   setHideLoading = () => {
     clearTimeout(this.timeout);
-    this.showLoading = false;
+    this._showLoading = false;
     this.searching = false;
     this.loadingMsg = MESSAGES.EMPTY;
   }
