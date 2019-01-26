@@ -16,6 +16,7 @@ import { DEFERRED, ENDPOINTS, MESSAGES } from './home.constants';
 export class HomeComponent {
   private searching = false;
   private showLoading = false;
+  private messagesConst = MESSAGES;
   private loadingMsg = MESSAGES.EMPTY;
   private timeout;
   private topMsg = MESSAGES.TOP;

@@ -19,6 +19,7 @@ export class ResultComponent {
   private created = false;
   private icon = 'fab fa-spotify';
   private resultMsg = '';
+  private showContainer: Boolean = false;
 
   constructor(private router: Router, private resultService: ResultService, private webApiService: WebAPIService) {
     this.playlistTracks = this.resultService.playlistTracks;
@@ -36,6 +37,10 @@ export class ResultComponent {
     });
 
     this.playlistTitle = 'My cool playlist';
+
+    setTimeout(() => {
+      this.showContainer = true;
+    }, 500);
   }
 
   saveToSpotify = () => {
