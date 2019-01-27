@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const config = require('../../../config');
 const UserModel = require('./user.schema');
 const AbstractLogic = require('../../core/logic/AbstractLogic');
 
@@ -26,8 +25,8 @@ class UserLogic extends AbstractLogic {
     };
 
     static generateJWT(id) {
-        return jwt.sign({id}, config.secret, {
-            expiresIn: 172800
+        return jwt.sign({id}, process.env.JWT_SECRET, {
+            expiresIn: 86400
         });
     }
 
@@ -37,6 +36,14 @@ class UserLogic extends AbstractLogic {
     static getBySpotifyId(spotifyId) {
         return super.executeQuery(this.Model.findOne({'spotifyId': spotifyId}, '_id'))
             .then(({data}) => data && data._id);
+    }
+
+    /**
+     * Fetches a user's spotify id by it's id.
+     */ 
+    static getSpotifyId(userId) {
+        return super.executeQuery(this.Model.findOne({'_id': userId}, 'spotifyId'))
+            .then(({data}) => data && data.spotifyId);
     }
 
     static createUserFromSpotifyUser(spotifyUser) {

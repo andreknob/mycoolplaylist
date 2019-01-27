@@ -1,28 +1,104 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthorizationService } from '../../service/spotify/authorization/authorization.service';
 import { WebAPIService } from '../../service/spotify/web-api/web-api.service';
+import { UserService } from 'src/app/service/user/user.service';
+import { ResultService } from 'src/app/service/result/result.service';
 import { WindowRefService } from '../../service/window/window-ref.service';
-import User from '../../model/user';
+import { DEFERRED, ENDPOINTS, MESSAGES } from './home.constants';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  providers: [AuthorizationService, WebAPIService]
+  providers: [WebAPIService]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
+  private searching = false;
+  private _showLoading = false;
+  private messagesConst = MESSAGES;
+  private _loadingMsg = MESSAGES.EMPTY;
+  private timeout;
+  private topMsg = MESSAGES.TOP;
 
-  user: User;
+  constructor(private authorizationService: AuthorizationService, private router: Router,
+    private webAPIService: WebAPIService, private userService: UserService,
+    private resultService: ResultService, private windowRefService: WindowRefService) {
+      if (this.userService.getAuthenticated()) {
+        this.setUserOnService();
+      } else if (localStorage.getItem('jwt') !== null) {
+        this.getSpotifyUserInfo();
+      }
 
-  constructor(private authorizationService: AuthorizationService, private webAPIService: WebAPIService,
-    private windowRefService: WindowRefService) {
-      this.user = JSON.parse(localStorage.getItem('user')) || {};
+      if (localStorage.getItem(DEFERRED.USE_TOP_SONGS)) {
+        this.getPlaylistFromTopArtists();
+        localStorage.removeItem(DEFERRED.USE_TOP_SONGS);
+      }
   }
 
-  ngOnInit() {
+  handleSearch = (searchTerm) => {
+    if (localStorage.getItem('jwt') === null) {
+      localStorage.setItem(DEFERRED.SEARCH_TERM, searchTerm);
+      return this.getAuthorizationPage();
+    }
+    return this.webAPIService.search(searchTerm);
   }
 
-  getAuthorizationPage() {
+  handleSelect = (item) => {
+    if (this.searching) {
+      return;
+    }
+    this.showLoading = true;
+    this.webAPIService.getPlaylistFromArtist(item.id).subscribe(data => {
+        const {playlistTracks} = JSON.parse(data.text());
+        this.resultService.playlistTracks = playlistTracks;
+
+        this.router.navigate([ENDPOINTS.PLAYLIST]);
+      },
+      error => {
+        this.setHideLoading();
+        if (error.status === 404) {
+          this.topMsg = JSON.parse(error.text()).message;
+        }
+      }
+    );
+  }
+
+  getPlaylistFromTopArtists = () => {
+    if (this.searching) {
+      return;
+    }
+    if (localStorage.getItem('jwt') === null) {
+      localStorage.setItem(DEFERRED.USE_TOP_SONGS, 'true');
+      return this.getAuthorizationPage();
+    }
+
+    this.showLoading = true;
+    this.webAPIService.getPlaylistFromTopArtists().subscribe(data => {
+        const {playlistTracks} = JSON.parse(data.text());
+        this.resultService.playlistTracks = playlistTracks;
+        this.router.navigate([ENDPOINTS.PLAYLIST]);
+      },
+      error => console.log(error)
+    );
+  }
+
+  getSpotifyUserInfo = () => {
+    this.webAPIService.getSpotifyUserInfo().subscribe(data => {
+        this.setUserOnService();
+      },
+      error => {
+        console.log(error);
+        if (error.status === 403) {
+          localStorage.removeItem('user');
+          localStorage.removeItem('jwt');
+          this.getAuthorizationPage();
+        }
+      }
+    );
+  }
+
+  getAuthorizationPage = () => {
     this.authorizationService.getAuthorizationPage().subscribe(data => {
         const {nativeWindow} = this.windowRefService;
         nativeWindow.location.href = data.text();
@@ -31,22 +107,38 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  openProfile() {
-    const {nativeWindow} = this.windowRefService;
-    const {externalURLs: {spotify: spotifyURL}} = this.user;
-
-    nativeWindow.open(spotifyURL);
+  setUserOnService = () => {
+    const lsUser = localStorage.getItem('user');
+    if (lsUser) {
+      this.userService.setUser(JSON.parse(lsUser));
+    }
   }
 
-  handleClickSearch = () => {
+  set showLoading(value) {
+    this.searching = true;
+
+    this.timeout = setTimeout(() => {
+      this.loadingMsg = MESSAGES.LOADING;
+      this._showLoading = value;
+    }, 1250);
   }
 
-  getTop() {
-    this.webAPIService.getTop().subscribe(data => {
-        const result = JSON.parse(data.text());
-        console.log(result);
-      },
-      error => console.log(error)
-    );
+  get showLoading() {
+    return this._showLoading;
+  }
+
+  set loadingMsg(value) {
+    this._loadingMsg = value;
+  }
+
+  get loadingMsg() {
+    return this._loadingMsg;
+  }
+
+  setHideLoading = () => {
+    clearTimeout(this.timeout);
+    this._showLoading = false;
+    this.searching = false;
+    this.loadingMsg = MESSAGES.EMPTY;
   }
 }

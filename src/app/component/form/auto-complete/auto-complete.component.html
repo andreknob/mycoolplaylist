@@ -1,11 +1,22 @@
 <div class="auto-complete">
-  <app-input [(value)]="value"></app-input>
+  <app-input
+    [(value)]="value"
+    [onChange]="handleSearch"
+    [onKeydown]="handleInputKeydown"
+    [placeholder]="placeholder"
+    [inputLarge]="true">
+  </app-input>
   <span class="icon-div">
-      <i class="fas fa-search" (click)="handleClickSearch()"></i>
+      <i class="fas fa-search" (click)="handleSearch()"></i>
   </span>
-  <ng-container *ngIf="results && displayAutoComplete">
-    <div *ngFor="let result of results">
-      <div class="result">{{result}}</div>
+  <div class="results-container" *ngIf="results && results.length > 0 && displayAutoComplete">
+    <div
+      #resultsQueryList
+      tabindex="0"
+      (click)="handleSelectItem(item)"
+      (keydown)="handleKeydown($event, item, i)"
+      *ngFor="let item of results; let i = index;">
+      <div id="{{item.id}}" class="result">{{item.name}}</div>
     </div>
-  </ng-container>    
+  </div>    
 </div>

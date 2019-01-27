@@ -7,11 +7,19 @@ import { Routing } from './app.routing';
 import { AppComponent } from './app.component';
 
 import { WindowRefService } from './service/window/window-ref.service';
+import { UserService } from './service/user/user.service';
+import { ResultService } from './service/result/result.service';
+
 import { HomeComponent } from './component/home/home.component';
 import { AuthenticatedComponent } from './component/authenticated/authenticated.component';
 import { InputComponent } from './component/form/input/input.component';
 import { ButtonComponent } from './component/form/button/button.component';
 import { AutoCompleteComponent } from './component/form/auto-complete/auto-complete.component';
+import { ResultComponent } from './component/result/result.component';
+import { BackgroundComponent } from './component/background/background.component';
+import { TopBarComponent } from './component/top-bar/top-bar.component';
+import { SectionComponent } from './component/section/section.component';
+import { RadioButtonComponent } from './component/form/radio-button/radio-button.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +28,12 @@ import { AutoCompleteComponent } from './component/form/auto-complete/auto-compl
     AuthenticatedComponent,
     InputComponent,
     ButtonComponent,
-    AutoCompleteComponent
+    AutoCompleteComponent,
+    ResultComponent,
+    BackgroundComponent,
+    TopBarComponent,
+    SectionComponent,
+    RadioButtonComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +41,7 @@ import { AutoCompleteComponent } from './component/form/auto-complete/auto-compl
     FormsModule,
     Routing
   ],
-  providers: [WindowRefService],
+  providers: [WindowRefService, UserService, ResultService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

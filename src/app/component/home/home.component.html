@@ -1,32 +1,26 @@
-<div class="top-bar" *ngIf="user">
-  <div class="avatar">
-    <img
-      src="{{user.image && user.image.url}}"
-      (click)="openProfile()"
-      alt="Avatar" />
-  </div>
-</div>
+<app-section>
+  <div *ngIf="!showLoading" class="hideableDiv" [ngClass]="{'hide': searching}">
+    <h2>
+      {{topMsg}}
+    </h2>
 
-<section>
-  <h2>
-    We create a cool random playlist for you
-  </h2>
-  <h3>
-    type in an artist to be used as base
-  </h3>
-  <div>
-    <app-auto-complete [(value)]="value" [onClickSearch]="handleClickSearch"></app-auto-complete>
-  </div>
-  <div>
-    {{value}}
-  </div>
-  <h3>
-      or
-  </h3>
-  <app-button [title]="'use your top songs'"></app-button>
+    <div>
+      <app-auto-complete
+        [(value)]="value"
+        [onSearch]="handleSearch"
+        [onSelect]="handleSelect"
+        [placeholder]="messagesConst.TYPE_ARTIST">
+      </app-auto-complete>
+    </div>
+    <h3>
+        or
+    </h3>
 
-  <app-button [title]="'Authorization'" (click)="getAuthorizationPage()"></app-button>
-  
-  <app-button [title]="'Get Top'" (click)="getTop()"></app-button>
-</section>
+    <app-button [title]="messagesConst.USE_TOP_SONGS" [onClick]="getPlaylistFromTopArtists"></app-button>
+  </div>
 
+  <div class="loading-msg" [ngClass]="{'loading-msg-show': showLoading}">
+    <i class="fas fa-circle-notch fa-spin fa-lg" style="margin-right: 15px"></i>
+    <h3>{{loadingMsg}}</h3>
+  </div>
+</app-section>

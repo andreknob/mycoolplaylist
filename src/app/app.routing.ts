@@ -2,11 +2,16 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './component/home/home.component';
 import { AuthenticatedComponent } from './component/authenticated/authenticated.component';
+import { ResultComponent } from './component/result/result.component';
 
 const appRoutes: Routes = [
   {
     path: 'authenticated/:jwt',
     component: AuthenticatedComponent,
+  },
+  {
+    path: 'playlist',
+    component: ResultComponent,
   },
   {
     path: '',

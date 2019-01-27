@@ -1,0 +1,14 @@
+<div class="top-bar" >
+  <app-button
+    *ngIf="!_user"
+    [icon]="authButtonIcon"
+    title="Authorization"
+    (click)="getAuthorizationPage()">
+  </app-button>
+  <div *ngIf="_user" class="avatar">
+    <img
+      src="{{_user.image && _user.image.url}}"
+      (click)="openProfile()"
+      alt="Avatar" />
+  </div>
+</div>

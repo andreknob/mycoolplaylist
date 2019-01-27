@@ -5,18 +5,20 @@ import { UserService } from '../../service/user/user.service';
 @Component({
   selector: 'app-authenticated',
   template: '',
-  providers: [UserService],
 })
 export class AuthenticatedComponent {
-
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) {
-    // @todo discover why sometimes the page is redirected to the authenticated link two times
     this.route.params.subscribe(params => localStorage.setItem('jwt', params['jwt']));
 
-    if (!localStorage.getItem('user')) {
+    const lsUser = localStorage.getItem('user');
+    if (!lsUser) {
       this.userService.getUserInfo().subscribe(
         data => {
-          localStorage.setItem('user', data.text());
+          const user = data.text();
+
+          localStorage.setItem('user', user);
+          this.userService.setAuthenticated(true);
+
           this.router.navigate(['']);
         },
         err => console.log(err)

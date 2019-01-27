@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
+  // @todo ver no package json pq tem aquela dependency do express
   constructor() {
   }
 

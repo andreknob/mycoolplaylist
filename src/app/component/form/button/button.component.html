@@ -1,3 +1,4 @@
-<button (click)="handleClick()">
+<button title="" [ngClass]="{'primary': !secondary, 'secondary': secondary}" (click)="handleClick()">
+  <i class="{{icon}} fa-lg" style="margin-right: 5px"></i>
   {{title}}
 </button>

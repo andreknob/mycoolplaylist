@@ -1,0 +1,34 @@
+<app-section>
+  <div class="container" [ngClass]="{'show': showContainer}">
+    <h2>
+      Check out your playlist
+    </h2>
+    <div class="panel">
+        <div class="tracks">
+          <div class="track" *ngFor="let track of displayTracks">
+            <span class="artist">{{track.artist}}</span>, {{track.name}}
+          </div>
+        </div>
+        <div class="options">
+          <div>
+            <app-input [(value)]="playlistTitle" label="Playlist's title"></app-input>
+            <app-radio-button [(value)]="playlistState"></app-radio-button>
+          </div>
+
+          <div class="result-msg" [ngClass]="{'result-msg-show': created}">
+            <h3>{{resultMsg}}</h3>
+          </div>
+
+          <div *ngIf="!created" class="button">
+            <app-button
+              [icon]="icon"
+              title="Save to Spotify"
+              [secondary]="true"
+              [disabled]="loading"
+              [onClick]="saveToSpotify">
+            </app-button>
+          </div>
+        </div>
+    </div>
+  </div>
+</app-section>
