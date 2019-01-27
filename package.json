@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "cd backend && npm install && cd .. && ng build --aot --prod --env=prod"
+    "postinstall": "cd backend && npm install && cd .. && ng build --aot --prod --configuration=production"
   },
   "private": true,
   "dependencies": {
