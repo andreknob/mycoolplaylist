@@ -94,7 +94,7 @@ class SpotifyController extends AbstractController {
             const {status, ...rest} = result;
             res.status(status).json({...rest});
         }
-        res.redirect(`http://localhost:4200/authenticated/${result.jsonWebToken}`);
+        res.redirect(`${proccess.env.FRONTEND_ADDRESS}/authenticated/${result.jsonWebToken}`);
     }
 }
 
