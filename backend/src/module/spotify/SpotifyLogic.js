@@ -1,5 +1,6 @@
 const SpotifyHelper = require('./SpotifyHelper');
 const UserLogic = require('../user/UserLogic');
+const PlaylistLogic = require('../playlist/PlaylistLogic');
 const AccessTokenLogic = require('./access-token/AccessTokenLogic');
 const StateLogic = require('./state/StateLogic');
 const JsonHelper = require('../../core/helper/JsonHelper');
@@ -236,6 +237,8 @@ class SpotifyLogic {
         try {
             const spotifyUserId = await UserLogic.getSpotifyId(userId);
             const {status, ...result} = await SpotifyHelper.promiseCall(this.postPlaylist.bind(this, accessToken, spotifyUserId, title, state));
+
+            await PlaylistLogic.post({title, userId});
 
             if (status !== 200) {
                 return callback({status, result}); 
