@@ -73,3 +73,21 @@ h2, h3, h4, i {
         margin-top: 25px;
     }
 }
+
+@media (max-width: 1024px) and (max-height: 1200px) {
+    .tracks {
+        height: 40vh;
+    }
+}
+
+@media (max-width: 700px) and (max-height: 900px) {
+    .tracks {
+        height: 30vh;
+    }
+}
+
+@media (max-width: 500px) and (max-height: 700px) {
+    .tracks {
+        height: 20vh;
+    }
+}
