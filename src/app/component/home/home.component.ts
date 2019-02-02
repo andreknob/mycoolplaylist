@@ -21,9 +21,13 @@ export class HomeComponent {
   private timeout;
   private topMsg = MESSAGES.TOP;
 
-  constructor(private authorizationService: AuthorizationService, private router: Router,
-    private webAPIService: WebAPIService, private userService: UserService,
-    private resultService: ResultService, private windowRefService: WindowRefService) {
+  constructor(
+    private authorizationService: AuthorizationService,
+    private router: Router,
+    private webAPIService: WebAPIService,
+    private userService: UserService,
+    private resultService: ResultService,
+    private windowRefService: WindowRefService) {
       if (this.userService.getAuthenticated()) {
         this.setUserOnService();
       } else if (localStorage.getItem('jwt') !== null) {
@@ -88,7 +92,6 @@ export class HomeComponent {
         this.setUserOnService();
       },
       error => {
-        console.log(error);
         if (error.status === 403) {
           localStorage.removeItem('user');
           localStorage.removeItem('jwt');

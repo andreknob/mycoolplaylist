@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression')
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
@@ -20,12 +21,13 @@ mongoose.connection.on('error', error => {
 const PORT = process.env.PORT || 8080;
 
 const corsOptions = {
-    origin: 'http://localhost:8080',
+    origin: process.env.FRONTEND_ADDRESS,
     optionsSuccessStatus: 200
 }
 // adding cors
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
+// compress all responses
+app.use(compression());
 // adding json
 app.use(bodyparser.json());
 // use routes

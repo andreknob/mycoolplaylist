@@ -1,4 +1,10 @@
-<div class="top-bar" >
+<div class="top-bar" [ngClass]="{'flex-end': !_tracksAreSet, 'space-between': _tracksAreSet}">
+  <app-button
+    *ngIf="_tracksAreSet"
+    icon="fa fa-home"
+    title="Home"
+    (click)="goToHome()">
+  </app-button>
   <app-button
     *ngIf="!_user"
     [icon]="authButtonIcon"

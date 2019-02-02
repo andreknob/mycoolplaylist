@@ -1,10 +1,10 @@
 <app-section>
   <div *ngIf="!showLoading" class="hideableDiv" [ngClass]="{'hide': searching}">
-    <h2>
+    <h2 style="text-align: center">
       {{topMsg}}
     </h2>
 
-    <div>
+    <div style="width: 100%">
       <app-auto-complete
         [(value)]="value"
         [onSearch]="handleSearch"
